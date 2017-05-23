@@ -10,31 +10,19 @@ using namespace std;
 class Node {
 public:
     Node(int value);
-
     ~Node();
-
     int get_height();
-
     void set_height(int h);
-
     void update_height();
-
     int get_height_diff();
-
     int get_value();
-
     void set_left(Node* n);
-
     Node* get_left();
-
     void set_right(Node* n);
-
     Node* get_right();
-
     void set_father(Node* n);
-
     Node* get_father();
-
+    void set_son(Node* n);
     void print_node();
 
 private:
@@ -134,6 +122,18 @@ Node* Node::get_father() {
     return father;
 }
 
+void Node::set_son(Node* n) {
+    if (n != NULL) { // Have to also update either left or right
+        int val = n->get_value();
+        if (val > this->value) { //right
+            this->set_right(n);
+        }
+        else { //left
+            this->set_left(n);
+        }
+    }
+}
+
 void Node::print_node() {
     printf("I am at %d my height is %d height diff is %d\n", this->get_value(), this->get_height(),
            this->get_height_diff());
@@ -144,6 +144,7 @@ AVLTree::AVLTree() {
 }
 
 void AVLTree::add_value(int v) {
+    printf("adding %d\n", v);
     if (root == NULL) {
         root = new Node(v);
     } else {
@@ -180,17 +181,20 @@ Node* AVLTree::add_value(Node* node, int v) { // Assumir valores diferentes a se
 void AVLTree::traverse_backwards(Node* node) {
 
     node->update_height();
-
+    Node* father = node->get_father();
+    
     int diff = node->get_height_diff();
 
     if (diff < -1) { // left deeper
         int left_diff = node->get_left()->get_height_diff();
 
-        if (left_diff < 0) {// left -> left case1 @ example
+        if (left_diff <= 0) {// left -> left case1 @ example if both heights are now equal we keep going in the same direction (left)
             printf("case1\n");
             Node* new_root = node->get_left();
-            new_root->set_father(node->get_father());
-
+            new_root->set_father(father);
+            if (father != NULL)
+                father->set_son(new_root);
+            
             Node* temp = new_root->get_right();
 
             new_root->set_right(node);
@@ -201,7 +205,9 @@ void AVLTree::traverse_backwards(Node* node) {
 		else { // left -> right case3 @ example
 			printf("case3\n");
             Node* new_root = node->get_left()->get_right();
-            new_root->set_father(node->get_father());
+            new_root->set_father(father);
+            if (father != NULL)
+                father->set_son(new_root);
             
             Node* temp_left = new_root->get_left();
             Node* temp_right = new_root->get_right();
@@ -215,8 +221,8 @@ void AVLTree::traverse_backwards(Node* node) {
             node->update_height();
             new_root->update_height();
             node = new_root;
-		
         }
+        
     }
     else if (diff > 1) { // right deeper
         
@@ -225,8 +231,9 @@ void AVLTree::traverse_backwards(Node* node) {
         if (right_diff < 0) { // right->left case4
             printf("case4\n");
             Node* new_root  = node->get_right()->get_left();
-            new_root->set_father(node->get_father());
-            
+            new_root->set_father(father);
+            if (father != NULL)
+                father->set_son(new_root);
             Node* temp_left = new_root->get_left();
             Node* temp_right = new_root->get_right();
             
@@ -244,7 +251,11 @@ void AVLTree::traverse_backwards(Node* node) {
         else { // right->right case2
             printf("case2\n");
             Node* new_root = node->get_right();
-            new_root->set_father(node->get_father());
+            new_root->set_father(father);
+            if (father != NULL) {
+                printf("seting son\n");
+                father->set_son(new_root);
+            }
             
             Node* temp = new_root->get_left();
             
@@ -256,12 +267,13 @@ void AVLTree::traverse_backwards(Node* node) {
         }
     }
 
-    if (node->get_father() == NULL) {
+    
+    if (father == NULL) {
         root = node;
         return;
     }
 
-    traverse_backwards(node->get_father());
+    traverse_backwards(father);
 }
 
 void AVLTree::iterate_tree() {
