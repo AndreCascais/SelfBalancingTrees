@@ -30,3 +30,6 @@
 
 # Temp files
 *~
+.idea/
+cmake-build-debug/
+execs/
