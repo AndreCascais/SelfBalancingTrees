@@ -1,112 +1,160 @@
 #include <iostream>
-#include <string.h>
 #include <map>
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
 
-class Node {
-public:
-    Node(int value);
-    ~Node();
-    int get_height();
-    void set_height(int h);
-    int get_value();
-    void set_left(Node* n);
-    Node* get_left();
-    void set_right(Node* n);
-    Node* get_right();
-private:
-    int height;
-    int value;
-    Node* left;
-    Node* right;
+enum class Color {
+    RED, BLACK
 };
 
-class AVLTree {
+class RBNode {
 public:
-    AVLTree();
-    ~AVLTree();
-	void iterate_tree();
-    void destroy_tree();
+    RBNode();
+
+    RBNode(int value);
+
+    RBNode(int value, RBNode* leftChild, RBNode* rightChild, RBNode* parent);
+
+    ~RBNode();
+
+    int get_height();
+
+    void set_height(int h);
+
+    void update_height();
+
+    int get_height_diff();
+
+    int get_value();
+
+    void set_left(RBNode* n);
+
+    RBNode* get_left();
+
+    void set_right(RBNode* n);
+
+    RBNode* get_right();
+
+    void set_father(RBNode* n);
+
+    RBNode* get_father();
+
+    RBNode* isRoot();
+
+    void print_node();
+
+private:
+    Color _color_type;
+    int _height;
+    int _value;
+    RBNode* _leftChild;
+    RBNode* _rightChild;
+    RBNode* _parent;
+};
+
+class RBTree {
+public:
+    RBTree();
+
+    ~RBTree();
+
+    void iterate_tree();
+
     void add_value(int n);
 
+    void insert(RBNode* node, int n);
+
+    void remove(RBNode* node);
+
 private:
-    void add_value(Node* node, int n);
-    void destroy_tree(Node* node);
-    void delete_node(Node* node);
-    Node* root;
+    RBNode* _root;
+    int _size;
 };
 
-Node::Node(int v) {
-    value = v;
-    height = 0;
-    left = NULL;
-    right = NULL;
+RBNode::RBNode(int key, RBNode* leftChild, RBNode* rightChild, RBNode* parent) {
+    _color_type = Color::BLACK;
+    _height = 0;
+    _value = key;
+    _leftChild = leftChild;
+    _rightChild = rightChild;
+    _parent = parent;
 }
 
-int Node::get_value() {
-    return value;
+RBNode::RBNode(int v) {
+    RBNode::RBNode(v, nullptr, nullptr, nullptr);
 }
 
-int Node::get_height() {
-    return height;
+int RBNode::get_value() {
+    return _value;
 }
 
-void Node::set_height(int h) {
-    height = h;
+int RBNode::get_height() {
+    return _height;
 }
 
-void Node::set_left(Node* n) {
-    left = n;
+void RBNode::set_height(int h) {
+    _height = h;
 }
 
-Node* Node::get_left() {
-    return left;
+void RBNode::set_left(RBNode* n) {
+    _leftChild = n;
 }
 
-void Node::set_right(Node* n) {
-    right = n;
+RBNode* RBNode::get_left() {
+    return _leftChild;
 }
 
-Node* Node::get_right() {
-    return right;
+void RBNode::set_right(RBNode* n) {
+    _rightChild = n;
 }
 
-AVLTree::AVLTree() {
-	root = NULL;
+RBNode* RBNode::get_right() {
+    return _rightChild;
 }
 
-void AVLTree::add_value(int n) {
-	if (root == NULL) {
-		printf("Creating root\n");
-		root = new Node(n);
-	}
-	else
-		add_value(root, n);
-    
-}
-void AVLTree::add_value(Node* node, int n) { // Assumir valores diferentes a serem inseridos
-	int value = node->get_value();
-	if (n > value) {// Right
-		Node* node_right = node->get_right();
-		if (node_right == NULL)
-			node->set_right(new Node(n));
-		else
-			add_value(node_right, n);
-	}
-	else { // Left
-		Node* node_left = node->get_left();
-		if (node_left == NULL)
-			node->set_left(new Node(n));
-		else
-			add_value(node_left, n);
-	}
-    
+RBNode::RBNode() {
+    _color_type = Color::BLACK;
 }
 
-void AVLTree::iterate_tree() {
-    Node* n = root;
+RBNode::~RBNode() {
+
+}
+
+RBTree::RBTree() {
+    _root = new RBNode();
+}
+
+void RBTree::add_value(int n) {
+    if (_root == nullptr) {
+        std::cout << "Creating root" << std::endl;
+        _root = new RBNode(n);
+    } else
+        insert(_root, n);
+
+}
+
+void RBTree::insert(RBNode* node, int n) { // Assumir valores diferentes a serem inseridos
+    int value = node->get_value();
+    if (n > value) {// Right
+        RBNode* node_right = node->get_right();
+        if (node_right == NULL)
+            node->set_right(new RBNode(n));
+        else
+            insert(node_right, n);
+    } else { // Left
+        RBNode* node_left = node->get_left();
+        if (node_left == NULL)
+            node->set_left(new RBNode(n));
+        else
+            insert(node_left, n);
+    }
+
+}
+
+void RBTree::iterate_tree() {
+    RBNode* n = _root;
 
     printf("l - left\n");
     printf("r - right\n");
@@ -114,40 +162,41 @@ void AVLTree::iterate_tree() {
     printf("quit - quit\n");
 
     char s[10];
-    while (1) {
-		
-		printf("I am at %d\n", n->get_value());
+    while (true) {
+
+        printf("I am at %d\n", n->get_value());
         scanf("%s", s);
 
         if (strcmp(s, "l") == 0) {
-			Node* left = n->get_left();
-            if (left == NULL)
-                printf("Not going to NULL Node\n");
+            RBNode* left = n->get_left();
+            if (left == nullptr)
+                printf("Not going to NULL RBNode\n");
             else
                 n = left;
-        }
-        else if (strcmp(s, "r") == 0) {
-			Node* right = n->get_right();
-            if (right == NULL)
-                printf("Not going to NULL Node\n");
+        } else if (strcmp(s, "r") == 0) {
+            RBNode* right = n->get_right();
+            if (right == nullptr)
+                printf("Not going to NULL RBNode\n");
             else
                 n = right;
-        }
-        else if (strcmp(s, "root") == 0) {
-            n = root;
-        }
-        else if (strcmp(s, "quit") == 0) {
+        } else if (strcmp(s, "root") == 0) {
+            n = _root;
+        } else if (strcmp(s, "quit") == 0) {
             return;
-        }
-        else
+        } else
             printf("Unknown cmd\n");
     }
 }
+
+void RBTree::remove(RBNode* node) {
+
+}
+
 int main(int arc, char** argv) {
-    //AVLTree *a = new AVLTree;
-	AVLTree *t = new AVLTree();
-	t->add_value(1);
-	t->add_value(2);
-	t->iterate_tree();
+    //RBTree *a = new RBTree;
+    RBTree* t = new RBTree();
+    t->add_value(1);
+    t->add_value(2);
+    t->iterate_tree();
     return 0;
 }
