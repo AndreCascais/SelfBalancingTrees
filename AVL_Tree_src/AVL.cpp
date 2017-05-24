@@ -408,6 +408,9 @@ void AVLTree::iterate_tree() {
     printf("f - father\n");
     printf("root - root\n");
     printf("quit - quit\n");
+    printf("add - quit\n");
+    printf("remove - quit\n");
+
 
     char s[10];
     while (1) {
@@ -437,6 +440,14 @@ void AVLTree::iterate_tree() {
         } else if (strcmp(s, "quit") == 0) {
 			this->destroy_tree();
             return;
+        } else if (strcmp(s, "add") == 0) {
+            int v;
+            scanf("%d", &v);
+            this->add_value(v);
+        } else if (strcmp(s, "remove") == 0) {
+            int v;
+            scanf("%d", &v);
+            this->add_value(v);
         } else
             printf("Unknown cmd\n");
     }
