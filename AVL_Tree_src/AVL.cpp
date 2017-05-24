@@ -4,10 +4,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 using namespace std;
 
 //@todo overload operador == entre nodes ?
+
+FILE* file = NULL;
 
 class Node {
 public:
@@ -196,14 +201,10 @@ void AVLTree::destroy_tree(Node* node) {
 void AVLTree::remove_value(int v) {
     printf("removing %d\n", v);
     Node* found_node = find_value(root, v);
-	if (found_node != NULL)
-		printf("found val\n");
-	else 
-		printf("null\n");
-	Node* father = remove_node(found_node);
-	if (father != NULL) {
-		printf("going back on %d\n", father->get_value());
-    	traverse_backwards(father);
+	if (found_node != NULL) {
+		Node* father = remove_node(found_node);
+		if (father != NULL)
+			traverse_backwards(father);
 	}
 }
 
@@ -253,7 +254,6 @@ Node* AVLTree::remove_node(Node* node) {
 	Node* left_node = node->get_left();
 	Node* right_node = node->get_right();
     if (node->get_height() == 0) { // leaf
-		printf("leaf\n");
         if (father == NULL) { // root
             root = NULL;
         }
@@ -275,7 +275,9 @@ Node* AVLTree::remove_node(Node* node) {
 	}
 	else {	
 		Node* new_root = left_node->get_max();
-		Node* backtrack_node = new_root->get_father();
+		Node* backtrack_node = new_root->get_father(); // exemplo raul
+		if (backtrack_node->get_value() == node->get_value())// exemplo nao raul
+			backtrack_node = new_root;
 		new_root->get_father()->set_son(new_root->get_left());
 		if (father != NULL)
 			father->set_son(new_root);
@@ -318,6 +320,7 @@ void AVLTree::traverse_backwards(Node* node) {
             new_root->set_right(node);
             node->set_left(temp);
             node->update_height();
+			new_root->update_height();
             node = new_root;
         } 
 		else { // left -> right case3 @ example
@@ -373,16 +376,15 @@ void AVLTree::traverse_backwards(Node* node) {
             printf("case2\n");
             Node* new_root = node->get_right();
             new_root->set_father(father);
-            if (father != NULL) {
-                printf("seting son\n");
+            if (father != NULL)
                 father->set_son(new_root);
-            }
             
             Node* temp = new_root->get_left();
             
             new_root->set_left(node);
             node->set_right(temp);
             node->update_height();
+			new_root->update_height();
             node = new_root;
             
         }
@@ -398,10 +400,6 @@ void AVLTree::traverse_backwards(Node* node) {
 }
 
 void AVLTree::iterate_tree() {
-    Node* n = root;
-
-	if (n == NULL)
-		return;
 	
     printf("l - left\n");
     printf("r - right\n");
@@ -410,12 +408,32 @@ void AVLTree::iterate_tree() {
     printf("quit - quit\n");
     printf("add - quit\n");
     printf("remove - quit\n");
-
-
-    char s[10];
+	
+	
+	char s[10];
+	if (file != NULL) {
+		while (1) {
+			fscanf(file, "%s", s);
+			if (strcmp(s, "add") == 0) {
+				int v;
+				fscanf(file, "%d", &v);
+				this->add_value(v);
+			} 
+			else if (strcmp(s, "remove") == 0) {
+				int v;
+				fscanf(file, "%d", &v);
+				this->remove_value(v);
+			}
+			else if (strcmp(s, "end") == 0)
+				break;
+		}
+	}
+	printf("Done rading from file\n");
+	Node* n = root;
     while (1) {
-
-        n->print_node();
+	
+		if (n != NULL)
+        	n->print_node();
         scanf("%s", s);
 
         if (strcmp(s, "l") == 0) {
@@ -440,44 +458,41 @@ void AVLTree::iterate_tree() {
         } else if (strcmp(s, "quit") == 0) {
 			this->destroy_tree();
             return;
-        } else if (strcmp(s, "add") == 0) {
-            int v;
-            scanf("%d", &v);
-            this->add_value(v);
-        } else if (strcmp(s, "remove") == 0) {
-            int v;
-            scanf("%d", &v);
-            this->add_value(v);
-        } else
+        } 
+		else if (strcmp(s, "add") == 0) {
+			int v;
+			scanf("%d", &v);
+			this->add_value(v);
+			n = root;
+		} 
+		else if (strcmp(s, "remove") == 0) {
+			int v;
+			scanf("%d", &v);
+			this->remove_value(v);
+			n = root;
+		}
+		else
             printf("Unknown cmd\n");
     }
 }
 
-int main(int arc, char** argv) {
+int main(int argc, char** argv) {
     //AVLTree *a = new AVLTree;
+	printf("%d\n", argc);
+	if (argc > 1) {
+		file = fopen(argv[1], "r");
+	}
     AVLTree* t = new AVLTree();
 	
-	/*t->add_value(6);
-	t->add_value(2);
-	t->add_value(8);
-	t->add_value(1);
-	t->add_value(4);
-	t->add_value(9);
-	t->add_value(3);
-	t->remove_value(9);*/
-   	t->add_value(2);
-    t->add_value(78);
-    t->add_value(49);
-    t->add_value(50);
-    t->add_value(21);
-    t->add_value(34);
-    t->add_value(36);
-    t->add_value(81);
-    t->add_value(14);
-    t->add_value(70);
-	t->remove_value(34);
-	t->remove_value(49);
-
+	/*t->add_value(491);
+	t->add_value(485);
+	t->add_value(827);
+	t->add_value(411);
+	t->add_value(662);
+	t->add_value(835);
+	t->add_value(792);
+	t->add_value(959);*/
+	
     t->iterate_tree();
 	delete t;
     return 0;
