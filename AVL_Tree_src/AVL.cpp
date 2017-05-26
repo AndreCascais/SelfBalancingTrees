@@ -11,57 +11,58 @@ using namespace std;
 
 FILE* file = NULL;
 
-class Node {
+
+template <class T> class Node {
 public:
-    Node(int value);
+    Node(T value);
     ~Node();
 	
     int get_height();
     void update_height();
     int get_height_diff();
-    int get_value();
-    void set_left(Node* n);
-    Node* get_left();
-    void set_right(Node* n);
-    Node* get_right();
-    void set_father(Node* n);
-    Node* get_father();
-    void set_son(Node* n);
-	void delete_son(Node* n);
+    T get_value();
+    void set_left(Node<T>*);
+    Node<T>* get_left();
+    void set_right(Node<T>*);
+    Node<T>* get_right();
+    void set_father(Node<T>*);
+    Node<T>* get_father();
+    void set_son(Node<T>*);
+	void delete_son(Node<T>*);
 	
-	Node* get_min();
-	Node* get_max();
+	Node<T>* get_min();
+	Node<T>* get_max();
     void print_node();
 
 private:
-    int height;
-    int value;
-    Node* left;
-    Node* right;
-    Node* father;
+    T height;
+    T value;
+    Node<T>* left;
+    Node<T>* right;
+    Node<T>* father;
 };
 
-class AVLTree {
+template <class T> class AVLTree {
 public:
     AVLTree();
     ~AVLTree();
     void iterate_tree();
     void destroy_tree();
-    void add_value(int v);
-    void remove_value(int v);
+    void add_value(T);
+    void remove_value(T);
 
 private:
-    void destroy_tree(Node* node);
-    void delete_node(Node* node);
-    Node* find_value(Node* node, int v);
-    Node* add_value(Node* node, int v);
-    Node* remove_node(Node* node);
-    void traverse_backwards(Node* node);
+    void destroy_tree(Node<T>*);
+    void delete_node(Node<T>* );
+    Node<T>* find_value(Node<T>*, T);
+    Node<T>* add_value(Node<T>*, T);
+    Node<T>* remove_node(Node<T>*);
+    void traverse_backwards(Node<T>*);
 	
-    Node* root;
+    Node<T>* root;
 };
 
-Node::Node(int v) {
+template <class T> Node<T>::Node(T v) {
     value = v;
     height = 0;
     left = NULL;
@@ -69,67 +70,67 @@ Node::Node(int v) {
     father = NULL;
 }
 
-Node::~Node() {
+template <class T> Node<T>::~Node() {
 }
 
-int Node::get_value() {
+template <class T> T Node<T>::get_value() {
     return value;
 }
 
-int Node::get_height() {
+template <class T> int Node<T>::get_height() {
     return height;
 }
 
-void Node::update_height() {
-	Node* left = this->get_left();
-    Node* right = this->get_right();
+template <class T> void Node<T>::update_height() {
+	Node<T>* left = this->get_left();
+    Node<T>* right = this->get_right();
     int height_left = (left == NULL ? -1 : left->get_height());
     int height_right = (right == NULL ? -1 : right->get_height());
     height = 1 + max(height_left, height_right);
 }
 
-int Node::get_height_diff() {
-    Node* left = this->get_left();
-    Node* right = this->get_right();
+template <class T> int Node<T>::get_height_diff() {
+    Node<T>* left = this->get_left();
+    Node<T>* right = this->get_right();
     int left_height = (left == NULL ? -1 : left->get_height());
     int right_height = (right == NULL ? -1 : right->get_height());
 
     return right_height - left_height;
 }
 
-void Node::set_left(Node* n) {
+template <class T> void Node<T>::set_left(Node<T>* n) {
     if (n != NULL) {
         n->set_father(this);
     }
     left = n;
 }
 
-Node* Node::get_left() {
+template <class T> Node<T>* Node<T>::get_left() {
     return left;
 }
 
-void Node::set_right(Node* n) {
+template <class T> void Node<T>::set_right(Node<T>* n) {
     if (n != NULL) {
         n->set_father(this);
     }
     right = n;
 }
 
-Node* Node::get_right() {
+template <class T> Node<T>* Node<T>::get_right() {
     return right;
 }
 
-void Node::set_father(Node* n) {
+template <class T> void Node<T>::set_father(Node<T>* n) {
     father = n;
 }
 
-Node* Node::get_father() {
+template <class T> Node<T>* Node<T>::get_father() {
     return father;
 }
 
-void Node::set_son(Node* n) {
+template <class T> void Node<T>::set_son(Node<T>* n) {
     if (n != NULL) { // Have to also update either left or right
-        int val = n->get_value();
+        T val = n->get_value();
         if (val > this->value) { //right
             this->set_right(n);
         }
@@ -142,60 +143,63 @@ void Node::set_son(Node* n) {
 	}
 }
 
-void Node::delete_son(Node* n) { // deletes link only
-	Node* left_node = n->get_left();
-	if (left_node != NULL && left_node->get_value() == n->get_value())
+template <class T> void Node<T>::delete_son(Node<T>* n) { // deletes link only
+	Node<T>* left_node = n->get_left();
+	if (left_node != NULL && left_node->get_value() == n->get_value()) {
 		this->set_left(NULL);
-	else
+    }
+	else {
 		this->set_right(NULL);
-		
+    }	
 }
 
-Node* Node::get_max() {
-	Node* right = this->get_right();
+template <class T> Node<T>* Node<T>::get_max() {
+	Node<T>* right = this->get_right();
 	if (right == NULL)
 		return this;
 	else 
 		return right->get_max();
 }
 
-Node* Node::get_min() {
-	Node* left = this->get_left();
+template <class T> Node<T>* Node<T>::get_min() {
+	Node<T>* left = this->get_left();
 	if (left == NULL)
 		return this;
 	else 
 		return left->get_min();
 }
 
-void Node::print_node() {
-    printf("I am at %d my height is %d height diff is %d\n", this->get_value(), this->get_height(),
-           this->get_height_diff());
+template <class T> void Node<T>::print_node() {
+    //printf("I am at %d my height is %d height diff is %d\n", this->get_value(), this->get_height(),
+    //       this->get_height_diff());
+    cout << "I am at " << this->get_value() << " my height is " << this->get_height() <<
+        " height diff is " << this->get_height_diff() << endl;
 }
 
-AVLTree::AVLTree() {
+template <class T> AVLTree<T>::AVLTree() {
     root = NULL;
 }
 
-AVLTree::~AVLTree() {
+template <class T> AVLTree<T>::~AVLTree() {
 }
 
-void AVLTree::add_value(int v) {
-    printf("adding %d\n", v);
+template <class T> void AVLTree<T>::add_value(T v) {
+    cout << "Adding " << v << endl;
     if (root == NULL) {
-        root = new Node(v);
+        root = new Node<T>(v);
     }
 	else {
-        Node* new_node = add_value(root, v);
+        Node<T>* new_node = add_value(root, v);
         traverse_backwards(new_node->get_father());
     }
 
 }
 
-void AVLTree::destroy_tree() {
+template <class T> void AVLTree<T>::destroy_tree() {
 	destroy_tree(root);
 }
 
-void AVLTree::destroy_tree(Node* node) {
+template <class T> void AVLTree<T>::destroy_tree(Node<T>* node) {
 	if (node != NULL) {
 		destroy_tree(node->get_left());
 		destroy_tree(node->get_right());
@@ -203,48 +207,50 @@ void AVLTree::destroy_tree(Node* node) {
 	}
 }
 
-void AVLTree::remove_value(int v) {
-    printf("removing %d\n", v);
-    Node* found_node = find_value(root, v);
+template <class T> void AVLTree<T>::remove_value(T v) {
+    cout << "Removing " << v << endl;
+    Node<T>* found_node = find_value(root, v);
 	if (found_node != NULL) {
-		Node* backtrack_node = remove_node(found_node);
+		Node<T>* backtrack_node = remove_node(found_node);
 		if (backtrack_node != NULL) {
 			traverse_backwards(backtrack_node);
 		}
 	}
 }
 
-Node* AVLTree::add_value(Node* node, int v) { // Assumir valores diferentes a serem inseridos
-    int value = node->get_value();
+template <class T> Node<T>* AVLTree<T>::add_value(Node<T>* node, T v) { // Assumir valores diferentes a serem inseridos
+    T value = node->get_value();
     if (v > value) {// Right
-        Node* node_right = node->get_right();
+        Node<T>* node_right = node->get_right();
         if (node_right == NULL) {
-            Node* new_node = new Node(v);
+            Node<T>* new_node = new Node<T>(v);
             node->set_right(new_node);
             return new_node;
-        } else {
+        } 
+        else {
             return add_value(node_right, v);
         }
-    } else { // Left
-        Node* node_left = node->get_left();
+    } 
+    else { // Left
+        Node<T>* node_left = node->get_left();
         if (node_left == NULL) {
-            Node* new_node = new Node(v);
+            Node<T>* new_node = new Node<T>(v);
             node->set_left(new_node);
             return new_node;
-        } else {
+        } 
+        else {
             return add_value(node_left, v);
         }
     }
-
 }
 
-Node* AVLTree::find_value(Node* node, int v) {
-    int value = node->get_value();
+template <class T> Node<T>* AVLTree<T>::find_value(Node<T>* node, T v) {
+    T value = node->get_value();
     if (v == value) {
         return node;
     }
     else {
-        Node* new_node = (v > value) ? node->get_right() : node->get_left();
+        Node<T>* new_node = (v > value) ? node->get_right() : node->get_left();
         if (new_node == NULL) {
             return NULL;
         }
@@ -254,11 +260,11 @@ Node* AVLTree::find_value(Node* node, int v) {
     }
 }
 
-Node* AVLTree::remove_node(Node* node) {
+template <class T> Node<T>* AVLTree<T>::remove_node(Node<T>* node) {
 
-	Node* father = node->get_father();
-	Node* left_node = node->get_left();
-	Node* right_node = node->get_right();
+	Node<T>* father = node->get_father();
+	Node<T>* left_node = node->get_left();
+	Node<T>* right_node = node->get_right();
     if (node->get_height() == 0) { // leaf
         if (father == NULL) { // root
             root = NULL;
@@ -280,8 +286,8 @@ Node* AVLTree::remove_node(Node* node) {
 			father->set_son(right_node);
 	}
 	else {	
-		Node* new_root = left_node->get_max();
-		Node* backtrack_node = new_root->get_father(); // exemplo raul
+		Node<T>* new_root = left_node->get_max();
+		Node<T>* backtrack_node = new_root->get_father(); // exemplo raul
 		if (backtrack_node->get_value() == node->get_value())// exemplo nao raul
 			backtrack_node = new_root;
 		new_root->get_father()->set_son(new_root->get_left());
@@ -304,10 +310,10 @@ Node* AVLTree::remove_node(Node* node) {
 	return father;
 }
     
-void AVLTree::traverse_backwards(Node* node) {
+template <class T> void AVLTree<T>::traverse_backwards(Node<T>* node) {
 	// @todo definir rotacoes e usar combinações para cada caso
     node->update_height();
-    Node* father = node->get_father();
+    Node<T>* father = node->get_father();
     
     int diff = node->get_height_diff();
 
@@ -316,12 +322,12 @@ void AVLTree::traverse_backwards(Node* node) {
 
         if (left_diff <= 0) {// left -> left case1 @ example if both heights are now equal we keep going in the same direction (left)
             printf("case1\n");
-            Node* new_root = node->get_left();
+            Node<T>* new_root = node->get_left();
             new_root->set_father(father);
             if (father != NULL) // set father podia fazer as duas coisas
                 father->set_son(new_root);
             
-            Node* temp = new_root->get_right();
+            Node<T>* temp = new_root->get_right();
 
             new_root->set_right(node);
             node->set_left(temp);
@@ -331,13 +337,13 @@ void AVLTree::traverse_backwards(Node* node) {
         } 
 		else { // left -> right case3 @ example
 			printf("case3\n");
-            Node* new_root = node->get_left()->get_right();
+            Node<T>* new_root = node->get_left()->get_right();
             new_root->set_father(father);
             if (father != NULL)
                 father->set_son(new_root);
             
-            Node* temp_left = new_root->get_left();
-            Node* temp_right = new_root->get_right();
+            Node<T>* temp_left = new_root->get_left();
+            Node<T>* temp_right = new_root->get_right();
             
             new_root->set_left(node->get_left());
             new_root->set_right(node);
@@ -359,12 +365,12 @@ void AVLTree::traverse_backwards(Node* node) {
         
         if (right_diff < 0) { // right->left case4
             printf("case4\n");
-            Node* new_root  = node->get_right()->get_left();
+            Node<T>* new_root  = node->get_right()->get_left();
             new_root->set_father(father);
             if (father != NULL)
                 father->set_son(new_root);
-            Node* temp_left = new_root->get_left();
-            Node* temp_right = new_root->get_right();
+            Node<T>* temp_left = new_root->get_left();
+            Node<T>* temp_right = new_root->get_right();
             
             new_root->set_left(node);
             new_root->set_right(node->get_right());
@@ -380,22 +386,20 @@ void AVLTree::traverse_backwards(Node* node) {
         }
         else { // right->right case2
             printf("case2\n");
-            Node* new_root = node->get_right();
+            Node<T>* new_root = node->get_right();
             new_root->set_father(father);
             if (father != NULL)
                 father->set_son(new_root);
             
-            Node* temp = new_root->get_left();
+            Node<T>* temp = new_root->get_left();
             
             new_root->set_left(node);
             node->set_right(temp);
             node->update_height();
 			new_root->update_height();
             node = new_root;
-            
         }
     }
-
     
     if (father == NULL) {
         root = node;
@@ -405,7 +409,7 @@ void AVLTree::traverse_backwards(Node* node) {
     traverse_backwards(father);
 }
 
-void AVLTree::iterate_tree() {
+template <class T> void AVLTree<T>::iterate_tree() {
 	
     printf("l - left\n");
     printf("r - right\n");
@@ -414,7 +418,6 @@ void AVLTree::iterate_tree() {
     printf("quit - quit\n");
     printf("add - quit\n");
     printf("remove - quit\n");
-	
 	
 	char s[10];
 	if (file != NULL) {
@@ -435,33 +438,42 @@ void AVLTree::iterate_tree() {
 		}
 	}
 	printf("Done reading from file\n");
-	Node* n = root;
+	Node<T>* n = root;
     while (1) {
 	
-		if (n != NULL)
+		if (n != NULL) {
         	n->print_node();
+        }
         scanf("%s", s);
 
         if (strcmp(s, "l") == 0) {
-            Node* left = n->get_left();
+            Node<T>* left = n->get_left();
             if (left == NULL)
                 printf("Not going to NULL Node\n");
             else
                 n = left;
-        } else if (strcmp(s, "r") == 0) {
-            Node* right = n->get_right();
-            if (right == NULL)
+        } 
+        else if (strcmp(s, "r") == 0) {
+            Node<T>* right = n->get_right();
+            if (right == NULL) {
                 printf("Not going to NULL Node\n");
-            else
+            }
+            else {
                 n = right;
-        } else if (strcmp(s, "f") == 0) {
-            if (n == root)
+            }
+        } 
+        else if (strcmp(s, "f") == 0) {
+            if (n == root) {
                 printf("Already at root\n");
-            else
+            }
+            else {
                 n = n->get_father();
-        } else if (strcmp(s, "root") == 0) {
+            }
+        } 
+        else if (strcmp(s, "root") == 0) {
             n = root;
-        } else if (strcmp(s, "quit") == 0) {
+        } 
+        else if (strcmp(s, "quit") == 0) {
 			this->destroy_tree();
             return;
         } 
@@ -477,30 +489,22 @@ void AVLTree::iterate_tree() {
 			this->remove_value(v);
 			n = root;
 		}
-		else
+		else {
             printf("Unknown cmd\n");
+        }
     }
 }
 
 int main(int argc, char** argv) {
-    //AVLTree *a = new AVLTree;
-	printf("%d\n", argc);
+
 	if (argc > 1) {
 		file = fopen(argv[1], "r");
 	}
-    AVLTree* t = new AVLTree();
-	
-	/*t->add_value(491);
-	t->add_value(485);
-	t->add_value(827);
-	t->add_value(411);
-	t->add_value(662);
-	t->add_value(835);
-	t->add_value(792);
-	t->add_value(959);*/
-	
+
+    AVLTree<int>* t = new AVLTree<int>();
     t->iterate_tree();
 	delete t;
+    
     return 0;
 }
 
