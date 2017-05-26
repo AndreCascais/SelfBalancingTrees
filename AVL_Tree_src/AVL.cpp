@@ -4,9 +4,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 
 using namespace std;
 
@@ -18,6 +15,7 @@ class Node {
 public:
     Node(int value);
     ~Node();
+	
     int get_height();
     void update_height();
     int get_height_diff();
@@ -31,8 +29,8 @@ public:
     void set_son(Node* n);
 	void delete_son(Node* n);
 	
-	Node* get_max();
 	Node* get_min();
+	Node* get_max();
     void print_node();
 
 private:
@@ -59,6 +57,7 @@ private:
     Node* add_value(Node* node, int v);
     Node* remove_node(Node* node);
     void traverse_backwards(Node* node);
+	
     Node* root;
 };
 
@@ -82,8 +81,10 @@ int Node::get_height() {
 }
 
 void Node::update_height() {
-    int height_left = (this->get_left() == NULL ? -1 : this->get_left()->get_height());
-    int height_right = (this->get_right() == NULL ? -1 : this->get_right()->get_height());
+	Node* left = this->get_left();
+    Node* right = this->get_right();
+    int height_left = (left == NULL ? -1 : left->get_height());
+    int height_right = (right == NULL ? -1 : right->get_height());
     height = 1 + max(height_left, height_right);
 }
 
@@ -135,12 +136,13 @@ void Node::set_son(Node* n) {
         else { //left
             this->set_left(n);
         }
-    }
-	else
+    } 
+	else { // only gets here when we want to set right to null
 		this->set_right(NULL); //@todo hack much ?
+	}
 }
 
-void Node::delete_son(Node* n) {
+void Node::delete_son(Node* n) { // deletes link only
 	Node* left_node = n->get_left();
 	if (left_node != NULL && left_node->get_value() == n->get_value())
 		this->set_left(NULL);
@@ -150,17 +152,19 @@ void Node::delete_son(Node* n) {
 }
 
 Node* Node::get_max() {
-	if (this->get_right() == NULL)
+	Node* right = this->get_right();
+	if (right == NULL)
 		return this;
 	else 
-		return this->get_right()->get_max();
+		return right->get_max();
 }
 
 Node* Node::get_min() {
-	if (this->get_left() == NULL)
+	Node* left = this->get_left();
+	if (left == NULL)
 		return this;
 	else 
-		return this->get_left()->get_min();
+		return left->get_min();
 }
 
 void Node::print_node() {
@@ -179,7 +183,8 @@ void AVLTree::add_value(int v) {
     printf("adding %d\n", v);
     if (root == NULL) {
         root = new Node(v);
-    } else {
+    }
+	else {
         Node* new_node = add_value(root, v);
         traverse_backwards(new_node->get_father());
     }
@@ -202,9 +207,10 @@ void AVLTree::remove_value(int v) {
     printf("removing %d\n", v);
     Node* found_node = find_value(root, v);
 	if (found_node != NULL) {
-		Node* father = remove_node(found_node);
-		if (father != NULL)
-			traverse_backwards(father);
+		Node* backtrack_node = remove_node(found_node);
+		if (backtrack_node != NULL) {
+			traverse_backwards(backtrack_node);
+		}
 	}
 }
 
@@ -319,8 +325,8 @@ void AVLTree::traverse_backwards(Node* node) {
 
             new_root->set_right(node);
             node->set_left(temp);
-            node->update_height();
-			new_root->update_height();
+            node->update_height(); // allways updated
+			new_root->update_height(); // sometimes only
             node = new_root;
         } 
 		else { // left -> right case3 @ example
@@ -428,7 +434,7 @@ void AVLTree::iterate_tree() {
 				break;
 		}
 	}
-	printf("Done rading from file\n");
+	printf("Done reading from file\n");
 	Node* n = root;
     while (1) {
 	
