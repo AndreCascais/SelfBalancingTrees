@@ -118,10 +118,7 @@ RBNode<K, V>::~RBNode() = default;
 
 
 template<typename K, typename V>
-RBNode<K, V>::RBNode(K key, V value) {
-    RBNode<K, V>::RBNode(key, value, nullptr, nullptr, nullptr);
-    _color_type = Color::BLACK;
-}
+RBNode<K, V>::RBNode(K key, V value) : RBNode<K, V>::RBNode(key, value, nullptr, nullptr, nullptr){};
 
 
 template<typename K, typename V>
