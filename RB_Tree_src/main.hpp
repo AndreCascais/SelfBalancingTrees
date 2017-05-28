@@ -21,29 +21,33 @@ public:
 
     ~RBNode();
 
-    int get_height();
+    V get_value();
 
-    void set_height(int h);
+    K get_key();
+
+    void set_color(Color c);
 
     Color get_color();
 
-    int get_value();
+    RBNode<K, V>* get_leftChild();
 
-    void set_left(RBNode* n);
-
-    RBNode<K, V>* get_left();
-
-    void set_right(RBNode* n);
-
-    RBNode<K, V>* get_right();
+    RBNode<K, V>* get_rightChild();
 
     void set_father(RBNode* n);
 
+    void set_rightChild(RBNode* n);
+
+    void set_leftChild(RBNode* n);
+
     RBNode<K, V>* get_father();
 
-    RBNode<K, V>* isRoot();
-
     void print_node();
+
+    char color_to_string();
+
+    bool isRightChild();
+
+    bool isLeftChild();
 
 private:
     K _key;
@@ -51,7 +55,7 @@ private:
     Color _color_type;
     RBNode<K, V>* _leftChild;
     RBNode<K, V>* _rightChild;
-    RBNode<K, V>* _parent;
+    RBNode<K, V>* _father;
 };
 
 
@@ -62,11 +66,23 @@ public:
 
     ~RBTree();
 
+    RBNode<K, V>* get_successorOf(RBNode<K, V>* node);
+
+    RBNode<K, V>* minimumFrom(RBNode<K, V>* node);
+
+    RBNode<K, V>* maximumFrom(RBNode<K, V>* node);
+
     void iterate_tree(FILE* f);
 
-    void add_value(K key, V value);
+    void insert(K key, V value);
 
-    void insert(RBNode<K, V>* node, int n);
+    void insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode);
+
+    void insertFixUp(RBNode<K, V>* rootOfSubtree);
+
+    void set_leftChild(RBNode<K, V>* parent, RBNode<K, V>* child);
+
+    void set_rightChild(RBNode<K, V>* parent, RBNode<K, V>* child);
 
     void remove(RBNode<K, V>* node);
 
@@ -75,7 +91,10 @@ public:
     void destroy_tree();
 
 private:
+    RBNode<K, V>* _nullLeaf;
+
     RBNode<K, V>* _root;
+
     int _size;
 
     void destroy_tree(RBNode<K, V>* node);
@@ -83,20 +102,10 @@ private:
 
 
 template<typename K, typename V>
-void RBNode<K, V>::set_right(RBNode* n) {
-    _rightChild = n;
-}
-
-template<typename K, typename V>
-RBNode<K, V>* RBNode<K, V>::get_right() {
-    return _rightChild;
-}
-
-template<typename K, typename V>
 RBNode<K, V>::RBNode() {
     _leftChild = nullptr;
     _rightChild = nullptr;
-    _parent = nullptr;
+    _father = nullptr;
 //    _key = nullptr;
 //    _value = nullptr;
     _color_type = Color::BLACK;
@@ -109,95 +118,248 @@ RBNode<K, V>::RBNode(K key, V value, RBNode* leftChild, RBNode* rightChild, RBNo
     _value = value;
     _leftChild = leftChild;
     _rightChild = rightChild;
-    _parent = parent;
+    _father = parent;
 }
 
 template<typename K, typename V>
 RBNode<K, V>::~RBNode() = default;
 
 
+template<typename K, typename V>
+RBNode<K, V>::RBNode(K key, V value) : RBNode<K, V>::RBNode(key, value, nullptr, nullptr, nullptr) {};
+
 
 template<typename K, typename V>
-RBNode<K, V>::RBNode(K key, V value) : RBNode<K, V>::RBNode(key, value, nullptr, nullptr, nullptr){};
-
-
-template<typename K, typename V>
-int RBNode<K, V>::get_value() {
+V RBNode<K, V>::get_value() {
     return _value;
 }
 
-
 template<typename K, typename V>
-void RBNode<K, V>::set_left(RBNode* n) {
-    _leftChild = n;
+K RBNode<K, V>::get_key() {
+    return _key;
 }
 
+
 template<typename K, typename V>
-RBNode<K, V>* RBNode<K, V>::get_left() {
+void RBTree<K, V>::set_leftChild(RBNode<K, V>* father, RBNode<K, V>* child) {
+    father->set_leftChild(child);
+    child->set_father(father);
+    child->set_color(Color::RED);
+    insertFixUp(child);
+}
+
+
+template<typename K, typename V>
+void RBTree<K, V>::set_rightChild(RBNode<K, V>* father, RBNode<K, V>* child) {
+    father->set_rightChild(child);
+    child->set_father(father);
+    child->set_color(Color::RED);
+    insertFixUp(child);
+}
+
+
+template<typename K, typename V>
+RBNode<K, V>* RBNode<K, V>::get_leftChild() {
     return _leftChild;
 }
 
+
+template<typename K, typename V>
+RBNode<K, V>* RBNode<K, V>::get_rightChild() {
+    return _rightChild;
+}
+
+
 template<typename K, typename V>
 RBNode<K, V>* RBNode<K, V>::get_father() {
-    return _parent;
+    return _father;
 }
+
 
 template<typename K, typename V>
 void RBNode<K, V>::print_node() {
-    // << " my height is " << this->get_color()
-    std::cout << "I am at " << this->get_value()  << std::endl;
+    std::cout << "I am at key: " << this->get_key() << "with value" << this->get_value()
+              << "my color is " << this->color_to_string() << std::endl;
 }
 
+
 template<typename K, typename V>
-Color RBNode<K,V>::get_color() {
+Color RBNode<K, V>::get_color() {
     return _color_type;
 }
 
 
 template<typename K, typename V>
-RBTree<K, V>::RBTree() {
-    _root = new RBNode<K, V>();
+void RBNode<K, V>::set_color(Color c) {
+    this->_color_type = c;
 }
 
 
 template<typename K, typename V>
-void RBTree<K, V>::add_value(K key, V value) {
-    if (_root == nullptr) {
-        std::cout << "Creating root" << std::endl;
-        _root = new RBNode<K, V>(key, value);
+char RBNode<K, V>::color_to_string() {
+    switch (this->_color_type) {
+        case Color::RED:
+            return 'R';
+        case Color::BLACK:
+            return 'B';
     }
-    else {
-        insert(_root, value);
+}
+
+
+template<typename K, typename V>
+RBNode<K, V>* RBTree<K, V>::minimumFrom(RBNode<K, V>* node) {
+    auto leftChild = node->get_leftChild();
+    if ( leftChild != nullptr) {
+        if ( leftChild  == _nullLeaf ) {
+            return node;
+        }
+        return minimumFrom(leftChild);
+    }
+    return nullptr;
+}
+
+
+template<typename K, typename V>
+RBNode<K, V>* RBTree<K, V>::maximumFrom(RBNode<K, V>* node) {
+    auto rightChild = node->get_rightChild();
+    if (rightChild != nullptr) {
+        if ( rightChild == _nullLeaf ) {
+            return node;
+        }
+        return maximumFrom(rightChild);
+    }
+    return nullptr;
+}
+
+
+template<typename K, typename V>
+void RBNode<K, V>::set_father(RBNode* n) {
+    _father = n;
+}
+
+
+template<typename K, typename V>
+void RBNode<K, V>::set_leftChild(RBNode* n) {
+    _leftChild = n;
+}
+
+
+template<typename K, typename V>
+void RBNode<K, V>::set_rightChild(RBNode* n) {
+    _rightChild = n;
+}
+
+
+template<typename K, typename V>
+RBTree<K, V>::RBTree() {
+    _nullLeaf = new RBNode<K, V>();
+    _root = _nullLeaf;
+    _size = 0;
+}
+
+
+template<typename K, typename V>
+RBNode<K, V>* RBTree<K, V>::get_successorOf(RBNode<K, V>* node) {
+    // If node has right child, then the successor is the min of the right subtree
+    auto rightChild = node->get_rightChild();
+    if (rightChild != nullptr) {
+        if (rightChild != _nullLeaf) {
+            return minimumFrom(rightChild);
+        }
     }
 
+    // Else go upwards until we find a node that is a left child, it's parent will be the successor
+    auto currentNode = node;
+    while (currentNode->isRightChild()) {
+        currentNode = currentNode->get_father();
+    }
+    return currentNode->get_father();
 }
+
+
+template<typename K, typename V>
+bool RBNode<K, V>::isRightChild() {
+    if (this->get_father() == nullptr) {
+        return false;
+    }
+    return (this->get_father()->get_rightChild() == this);
+}
+
+
+template<typename K, typename V>
+bool RBNode<K, V>::isLeftChild() {
+    if (this->get_father() == nullptr) {
+        return false;
+    }
+    return (this->get_father()->get_leftChild() == this);
+}
+
 
 template<typename K, typename V>
 void RBTree<K, V>::remove(RBNode<K, V>* node) {
 
+
+    //Missing implementation
+    _size-=1;
 }
 
 
-// FIX THIS!!!!!!!!!!!!!!!!!
 template<typename K, typename V>
-void RBTree<K, V>::insert(RBNode<K, V>* node, int n) { // Assumir valores diferentes a serem inseridos
-    int value = node->get_value();
-    if (n > value) {// Right
-        RBNode<K, V>* node_right = node->get_right();
-        if (node_right == nullptr) {
-            node->set_right(new RBNode<K, V>(n, 0));
+void RBTree<K, V>::remove_value(K key) {
+
+
+
+
+    //Missing implementation
+}
+
+
+template<typename K, typename V>
+void RBTree<K, V>::insertFixUp(RBNode<K, V>* rootOfSubtree) {
+
+}
+
+
+template<typename K, typename V>
+void RBTree<K, V>::insert(K key, V value) {
+
+    auto newNode = new RBNode<K, V>(key, value);
+    if (_root == _nullLeaf) {
+        std::cout << "We have a root now!" << std::endl;
+        _root = newNode;
+    }
+    else {
+        insert(_root, newNode);
+    }
+
+    _size += 1;
+}
+
+
+// Assumir valores diferentes a serem inseridos
+template<typename K, typename V>
+void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
+    V newValue = newNode->get_value();
+    K newKey = newNode->get_key();
+    V oldValue = rootOfSubtree->get_value();
+    K oldKey = rootOfSubtree->get_key();
+
+    if (newValue > oldValue) { // Insert on the right
+        auto rightNode = rootOfSubtree->get_rightChild();
+        if (rightNode == _nullLeaf) {
+            set_rightChild(rootOfSubtree, newNode);
         }
         else {
-            insert(node_right, n);
+            insert(rightNode, newNode);
         }
     }
-    else { // Left
-        RBNode<K, V>* node_left = node->get_left();
-        if (node_left == nullptr) {
-            node->set_left(new RBNode<K, V>(n, 0));
+    else { // Insert on the left
+        auto leftNode = rootOfSubtree->get_leftChild();
+        if (leftNode == _nullLeaf) {
+            set_leftChild(rootOfSubtree, newNode);
         }
         else {
-            insert(node_left, n);
+            insert(leftNode, newNode);
         }
     }
 
@@ -222,7 +384,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
             if (strcmp(s, "add") == 0) {
                 int v;
                 fscanf(file, "%d", &v);
-                this->add_value(v, 0);
+                this->insert(v, 0);
             }
             else if (strcmp(s, "remove") == 0) {
                 int v;
@@ -244,7 +406,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         scanf("%s", s);
 
         if (strcmp(s, "l") == 0) {
-            RBNode<K, V>* left = n->get_left();
+            RBNode<K, V>* left = n->get_leftChild();
             if (left == NULL) {
                 printf("Not going to NULL Node\n");
             }
@@ -253,7 +415,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
             }
         }
         else if (strcmp(s, "r") == 0) {
-            RBNode<K, V>* right = n->get_right();
+            RBNode<K, V>* right = n->get_rightChild();
             if (right == NULL) {
                 printf("Not going to NULL Node\n");
             }
@@ -279,7 +441,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         else if (strcmp(s, "add") == 0) {
             int v;
             scanf("%d", &v);
-            this->add_value(v, 0);
+            this->insert(v, 0);
             n = _root;
         }
         else if (strcmp(s, "remove") == 0) {
@@ -294,25 +456,28 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
     }
 }
 
+
 template<typename K, typename V>
 void RBTree<K, V>::destroy_tree() {
     destroy_tree(_root);
 }
 
+
 template<typename K, typename V>
 void RBTree<K, V>::destroy_tree(RBNode<K, V>* node) {
-    if (node != NULL) {
-        destroy_tree(node->get_left());
-        destroy_tree(node->get_right());
+    if (node != nullptr) {
+        destroy_tree(node->get_leftChild());
+        destroy_tree(node->get_rightChild());
         delete node;
     }
 }
 
-template<typename K, typename V>
-RBTree<K, V>::~RBTree() = default;
 
 template<typename K, typename V>
-void RBTree<K, V>::remove_value(K key) {
+RBTree<K, V>::~RBTree() {
 
 }
+
+
+
 
