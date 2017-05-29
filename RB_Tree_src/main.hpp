@@ -301,7 +301,7 @@ bool RBNode<K, V>::isLeftChild() {
 }
 
 template<typename K, typename V>
-RBNode<K, V>* RBNode::get_brother() {
+RBNode<K, V>* RBNode<K, V>::get_brother() {
     if (isLeftChild()) {
         return get_father()->get_rightChild();
     }
@@ -315,12 +315,12 @@ RBNode<K, V>* RBNode::get_brother() {
 }
 
 template<typename K, typename V>
-RBNode<K, V>* RBNode::get_uncle() {
+RBNode<K, V>* RBNode<K, V>::get_uncle() {
     return get_father()->get_brother();
 }
 
 template<typename K, typename V>
-RBNode<K, V>* RBNode::get_grandFather() {
+RBNode<K, V>* RBNode<K, V>::get_grandFather() {
     return get_father()->get_father();
 }
 
@@ -596,7 +596,3 @@ void RBTree<K, V>::rotate_right(RBNode<K, V>* nodeX) {
 
 
 }
-
-
-
-
