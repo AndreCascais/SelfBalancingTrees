@@ -80,15 +80,19 @@ public:
 
     void insertFixUp(RBNode<K, V>* rootOfSubtree);
 
-    void set_leftChild(RBNode<K, V>* parent, RBNode<K, V>* child);
+    void set_leftChild(RBNode<K, V>* father, RBNode<K, V>* child);
 
-    void set_rightChild(RBNode<K, V>* parent, RBNode<K, V>* child);
+    void set_rightChild(RBNode<K, V>* father, RBNode<K, V>* child);
 
     void remove(RBNode<K, V>* node);
 
     void remove_value(K key);
 
     void destroy_tree();
+
+    void rotate_left(RBNode<K, V>* nodeX);
+
+    void rotate_right(RBNode<K, V>* nodeX);
 
 private:
     RBNode<K, V>* _nullLeaf;
@@ -209,8 +213,8 @@ char RBNode<K, V>::color_to_string() {
 template<typename K, typename V>
 RBNode<K, V>* RBTree<K, V>::minimumFrom(RBNode<K, V>* node) {
     auto leftChild = node->get_leftChild();
-    if ( leftChild != nullptr) {
-        if ( leftChild  == _nullLeaf ) {
+    if (leftChild != nullptr) {
+        if (leftChild == _nullLeaf) {
             return node;
         }
         return minimumFrom(leftChild);
@@ -223,7 +227,7 @@ template<typename K, typename V>
 RBNode<K, V>* RBTree<K, V>::maximumFrom(RBNode<K, V>* node) {
     auto rightChild = node->get_rightChild();
     if (rightChild != nullptr) {
-        if ( rightChild == _nullLeaf ) {
+        if (rightChild == _nullLeaf) {
             return node;
         }
         return maximumFrom(rightChild);
@@ -254,6 +258,7 @@ template<typename K, typename V>
 RBTree<K, V>::RBTree() {
     _nullLeaf = new RBNode<K, V>();
     _root = _nullLeaf;
+    _root->set_father(_nullLeaf);
     _size = 0;
 }
 
@@ -279,19 +284,13 @@ RBNode<K, V>* RBTree<K, V>::get_successorOf(RBNode<K, V>* node) {
 
 template<typename K, typename V>
 bool RBNode<K, V>::isRightChild() {
-    if (this->get_father() == nullptr) {
-        return false;
-    }
-    return (this->get_father()->get_rightChild() == this);
+    return this->get_father() != nullptr && this->get_father()->get_rightChild() == this;
 }
 
 
 template<typename K, typename V>
 bool RBNode<K, V>::isLeftChild() {
-    if (this->get_father() == nullptr) {
-        return false;
-    }
-    return (this->get_father()->get_leftChild() == this);
+    return this->get_father() != nullptr && this->get_father()->get_leftChild() == this;
 }
 
 
@@ -300,7 +299,7 @@ void RBTree<K, V>::remove(RBNode<K, V>* node) {
 
 
     //Missing implementation
-    _size-=1;
+    _size -= 1;
 }
 
 
@@ -336,7 +335,7 @@ void RBTree<K, V>::insert(K key, V value) {
 }
 
 
-// Assumir valores diferentes a serem inseridos
+// Assuming you can't add Nodes with the same key
 template<typename K, typename V>
 void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
     V newValue = newNode->get_value();
@@ -378,7 +377,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 
 
     char s[10];
-    if (file != NULL) {
+    if (file != nullptr) {
         while (true) {
             fscanf(file, "%s", s);
             if (strcmp(s, "add") == 0) {
@@ -474,7 +473,70 @@ void RBTree<K, V>::destroy_tree(RBNode<K, V>* node) {
 
 
 template<typename K, typename V>
-RBTree<K, V>::~RBTree() {
+RBTree<K, V>::~RBTree() = default;
+
+template<typename K, typename V>
+void RBTree<K, V>::rotate_left(RBNode<K, V>* nodeX) {
+
+    RBNode<K, V>* nodeY;
+
+    nodeY = nodeX->get_rightChild();
+    nodeX->set_rightChild(nodeY->get_leftChild());
+    if (nodeX->get_rightChild() != _nullLeaf) {
+        nodeX->get_rightChild()->set_father(nodeX);
+    }
+
+    nodeY->set_father(nodeX->get_father());
+
+    if (nodeX->get_father() == _nullLeaf) { // if nodeX was the root
+        _root = nodeY;
+    }
+    else if (nodeX->isLeftChild()) {
+        nodeX->get_father()->set_leftChild(nodeY);
+    }
+    else if (nodeX->isRightChild()) {
+        nodeX->get_father()->set_rightChild(nodeY);
+    }
+    else {
+        std::cout << "this can't happen";
+    }
+
+    nodeY->set_leftChild(nodeX);
+    nodeX->set_father(nodeY);
+
+}
+
+
+template<typename K, typename V>
+void RBTree<K, V>::rotate_right(RBNode<K, V>* nodeX) {
+
+
+    RBNode<K, V>* nodeY;
+
+    nodeY = nodeX->get_leftChild();
+    nodeX->set_leftChild(nodeY->get_rightChild());
+    if (nodeX->get_leftChild() != _nullLeaf) {
+        nodeX->get_leftChild()->set_father(nodeX);
+    }
+
+    nodeY->set_father(nodeX->get_father());
+
+    if (nodeX->get_father() == _nullLeaf) { // if nodeX was the root
+        _root = nodeY;
+    }
+    else if (nodeX->isLeftChild()) {
+        nodeX->get_father()->set_leftChild(nodeY);
+    }
+    else if (nodeX->isRightChild()) {
+        nodeX->get_father()->set_rightChild(nodeY);
+    }
+    else {
+        std::cout << "this can't happen";
+    }
+
+    nodeY->set_rightChild(nodeX);
+    nodeX->set_father(nodeY);
+
 
 }
 
