@@ -55,6 +55,8 @@ private:
     void destroy_tree(Node<T>*);
     void delete_node(Node<T>* );
     Node<T>* find_value(Node<T>*, T);
+	Node<T>* rotate_right(Node<T>*);
+	Node<T>* rotate_left(Node<T>*);
     Node<T>* add_value(Node<T>*, T);
     Node<T>* remove_node(Node<T>*);
     void traverse_backwards(Node<T>*);
@@ -216,6 +218,43 @@ template <class T> void AVLTree<T>::remove_value(T v) {
 			traverse_backwards(backtrack_node);
 		}
 	}
+}
+
+template <class T> Node<T>* AVLTree<T>::rotate_left(Node<T>* node_x) {
+	
+	Node<T>* node_y;
+
+    node_y = node_x->get_right();
+    node_x->set_right(node_y->get_left());
+
+    node_y->set_father(node_x->get_father());
+
+    if (node_y->get_father() == NULL) {
+        root = node_y;
+    }
+    else {
+        node_x->get_father()->set_son(node_y);
+    }
+
+    node_y->set_left(node_x);
+}
+
+template <class T> Node<T>* AVLTree<T>::rotate_right(Node<T>* node_x) {
+	
+	Node<T>* node_y;
+	
+	node_y = node_x->get_left();
+	node_x->set_left(node_y->get_right());
+	
+	node_y->set_father(node_x->get_father());
+	
+	if (node_y->get_father() == NULL) {
+		root = node_y;
+	}
+	else {
+		node_x->get_father()->set_son(node_y);
+	}
+	node_y->set_right(node_x);
 }
 
 template <class T> Node<T>* AVLTree<T>::add_value(Node<T>* node, T v) { // Assumir valores diferentes a serem inseridos
