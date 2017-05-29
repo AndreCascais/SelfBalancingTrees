@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <iostream>
 
 #include <cstring>
 #include <cstdio>
@@ -49,6 +50,12 @@ public:
 
     bool isLeftChild();
 
+    RBNode<K, V>* get_brother();
+
+    RBNode<K, V>* get_uncle();
+
+    RBNode<K, V>* get_grandFather();
+
 private:
     K _key;
     V _value;
@@ -78,7 +85,7 @@ public:
 
     void insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode);
 
-    void insertFixUp(RBNode<K, V>* rootOfSubtree);
+    void insertFixUp(RBNode<K, V>* nodeZ);
 
     void set_leftChild(RBNode<K, V>* father, RBNode<K, V>* child);
 
@@ -293,6 +300,29 @@ bool RBNode<K, V>::isLeftChild() {
     return this->get_father() != nullptr && this->get_father()->get_leftChild() == this;
 }
 
+template<typename K, typename V>
+RBNode<K, V>* RBNode::get_brother() {
+    if (isLeftChild()) {
+        return get_father()->get_rightChild();
+    }
+    else if (isRightChild()) {
+        return get_father()->get_leftChild();
+    }
+    else {
+        std::cout << "This can't happen";
+        return nullptr;
+    }
+}
+
+template<typename K, typename V>
+RBNode<K, V>* RBNode::get_uncle() {
+    return get_father()->get_brother();
+}
+
+template<typename K, typename V>
+RBNode<K, V>* RBNode::get_grandFather() {
+    return get_father()->get_father();
+}
 
 template<typename K, typename V>
 void RBTree<K, V>::remove(RBNode<K, V>* node) {
@@ -314,7 +344,34 @@ void RBTree<K, V>::remove_value(K key) {
 
 
 template<typename K, typename V>
-void RBTree<K, V>::insertFixUp(RBNode<K, V>* rootOfSubtree) {
+void RBTree<K, V>::insertFixUp(RBNode<K, V>* nodeZ) {
+
+    // We only need to fix the tree if the parent was also red
+    if (nodeZ->get_father()->get_color() != Color::RED) {
+        return;
+    }
+
+    RBNode<K, V>* nodeY = nodeZ->get_uncle();
+    RBNode<K, V>* father = nodeZ->get_father();
+    RBNode<K, V>* grandFather = nodeZ->get_grandFather();
+
+
+    // Case 1: Uncle is RED - recolor father and uncle and move z pointer and start again.
+    if (nodeY->get_color() == Color::RED) {
+        father->set_color(Color::BLACK);
+        nodeY->set_color(Color::BLACK);
+
+        if (grandFather != _nullLeaf) {
+            grandFather->set_color(Color::RED);
+            insertFixUp(grandFather);
+        }
+    }
+
+    // Case 2: Uncle is BLACK
+
+
+
+    _root->set_color(Color::BLACK);
 
 }
 

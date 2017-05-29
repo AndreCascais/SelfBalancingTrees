@@ -1,10 +1,3 @@
-#include <iostream>
-#include <map>
-
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>
-
 #include "main.hpp"
 
 int main(int argc, char** argv) {
