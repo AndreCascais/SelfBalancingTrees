@@ -55,8 +55,8 @@ private:
     void destroy_tree(Node<T>*);
     void delete_node(Node<T>* );
     Node<T>* find_value(Node<T>*, T);
-	Node<T>* rotate_right(Node<T>*);
-	Node<T>* rotate_left(Node<T>*);
+	void rotate_right(Node<T>*);
+	void rotate_left(Node<T>*);
     Node<T>* add_value(Node<T>*, T);
     Node<T>* remove_node(Node<T>*);
     void traverse_backwards(Node<T>*);
@@ -220,7 +220,7 @@ template <class T> void AVLTree<T>::remove_value(T v) {
 	}
 }
 
-template <class T> Node<T>* AVLTree<T>::rotate_left(Node<T>* node_x) {
+template <class T> void AVLTree<T>::rotate_left(Node<T>* node_x) {
 	
 	Node<T>* node_y;
 
@@ -237,9 +237,11 @@ template <class T> Node<T>* AVLTree<T>::rotate_left(Node<T>* node_x) {
     }
 
     node_y->set_left(node_x);
+    node_x->update_height();
+    node_y->update_height();
 }
 
-template <class T> Node<T>* AVLTree<T>::rotate_right(Node<T>* node_x) {
+template <class T> void AVLTree<T>::rotate_right(Node<T>* node_x) {
 	
 	Node<T>* node_y;
 	
@@ -255,6 +257,8 @@ template <class T> Node<T>* AVLTree<T>::rotate_right(Node<T>* node_x) {
 		node_x->get_father()->set_son(node_y);
 	}
 	node_y->set_right(node_x);
+    node_x->update_height();
+    node_y->update_height();
 }
 
 template <class T> Node<T>* AVLTree<T>::add_value(Node<T>* node, T v) { // Assumir valores diferentes a serem inseridos
@@ -349,11 +353,11 @@ template <class T> Node<T>* AVLTree<T>::remove_node(Node<T>* node) {
 	return father;
 }
     
+
 template <class T> void AVLTree<T>::traverse_backwards(Node<T>* node) {
-	// @todo definir rotacoes e usar combinações para cada caso
+
     node->update_height();
-    Node<T>* father = node->get_father();
-    
+    Node<T>* new_root = node;
     int diff = node->get_height_diff();
 
     if (diff < -1) { // left deeper
@@ -361,40 +365,15 @@ template <class T> void AVLTree<T>::traverse_backwards(Node<T>* node) {
 
         if (left_diff <= 0) {// left -> left case1 @ example if both heights are now equal we keep going in the same direction (left)
             printf("case1\n");
-            Node<T>* new_root = node->get_left();
-            new_root->set_father(father);
-            if (father != NULL) // set father podia fazer as duas coisas
-                father->set_son(new_root);
+            new_root = node->get_left();
+            this->rotate_right(node);
             
-            Node<T>* temp = new_root->get_right();
-
-            new_root->set_right(node);
-            node->set_left(temp);
-            node->update_height(); // allways updated
-			new_root->update_height(); // sometimes only
-            node = new_root;
         } 
 		else { // left -> right case3 @ example
 			printf("case3\n");
-            Node<T>* new_root = node->get_left()->get_right();
-            new_root->set_father(father);
-            if (father != NULL)
-                father->set_son(new_root);
-            
-            Node<T>* temp_left = new_root->get_left();
-            Node<T>* temp_right = new_root->get_right();
-            
-            new_root->set_left(node->get_left());
-            new_root->set_right(node);
-            
-            new_root->get_left()->set_right(temp_left);
-            new_root->get_right()->set_left(temp_right);
-            
-			
-			new_root->get_left()->update_height();
-			new_root->get_right()->update_height();
-            new_root->update_height();
-            node = new_root;
+            new_root = node->get_left()->get_right();
+            this->rotate_left(node->get_left());
+            this->rotate_right(node);
         }
         
     }
@@ -404,44 +383,22 @@ template <class T> void AVLTree<T>::traverse_backwards(Node<T>* node) {
         
         if (right_diff < 0) { // right->left case4
             printf("case4\n");
-            Node<T>* new_root  = node->get_right()->get_left();
-            new_root->set_father(father);
-            if (father != NULL)
-                father->set_son(new_root);
-            Node<T>* temp_left = new_root->get_left();
-            Node<T>* temp_right = new_root->get_right();
-            
-            new_root->set_left(node);
-            new_root->set_right(node->get_right());
-            
-            new_root->get_left()->set_right(temp_left);
-            new_root->get_right()->set_left(temp_right);
-           
-			new_root->get_left()->update_height();
-			new_root->get_right()->update_height();
-            new_root->update_height();
-            node = new_root;
+            new_root  = node->get_right()->get_left();
+            this->rotate_right(node->get_right());
+            this->rotate_left(node);
             
         }
         else { // right->right case2
             printf("case2\n");
-            Node<T>* new_root = node->get_right();
-            new_root->set_father(father);
-            if (father != NULL)
-                father->set_son(new_root);
-            
-            Node<T>* temp = new_root->get_left();
-            
-            new_root->set_left(node);
-            node->set_right(temp);
-            node->update_height();
-			new_root->update_height();
-            node = new_root;
+            new_root = node->get_right();
+            this->rotate_left(node);
         }
     }
     
+    Node<T>* father = new_root->get_father();
+    
     if (father == NULL) {
-        root = node;
+        root = new_root;
         return;
     }
 
