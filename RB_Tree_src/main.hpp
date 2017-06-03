@@ -85,7 +85,7 @@ public:
 
     void insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode);
 
-    void insertFixUp(RBNode<K, V>* nodeZ);
+    void insertFixUp(RBNode<K, V>* node_Z);
 
     void set_leftChild(RBNode<K, V>* father, RBNode<K, V>* child);
 
@@ -340,51 +340,55 @@ void RBTree<K, V>::remove_value(K key) {
 
 
 template<typename K, typename V>
-void RBTree<K, V>::insertFixUp(RBNode<K, V>* nodeZ) {
+void RBTree<K, V>::insertFixUp(RBNode<K, V>* node_Z) {
 
-    RBNode<K, V>* nodeY = nodeZ->get_uncle();
-    RBNode<K, V>* father = nodeZ->get_father();
-    RBNode<K, V>* grandFather = nodeZ->get_grandFather();
+    RBNode<K, V>* nodeY = node_Z->get_uncle();
+    RBNode<K, V>* father = node_Z->get_father();
+    RBNode<K, V>* grandFather = node_Z->get_grandFather();
 
     // We only need to fix the tree if the parent was also red
     if (father->get_color() != Color::RED) {
         return;
     }
 
-
-    // Case 1: Uncle is RED - recolor father and uncle and move z pointer and start again.
+    // Case 1: Uncle is RED - recolor father and uncle and move z pointer to grandFather and start again.
     if (nodeY->get_color() == Color::RED) {
         father->set_color(Color::BLACK);
         nodeY->set_color(Color::BLACK);
+        grandFather->set_color(Color::RED);
 
-        if (grandFather != _nullLeaf) {
-            grandFather->set_color(Color::RED);
-            insertFixUp(grandFather);
-        }
+        insertFixUp(grandFather);
     }
 
     // Case 2: Uncle is BLACK
     else {
-        auto newNodeZ = father;
-        if ( father->isLeftChild() && nodeZ->isRightChild() ) {
-            rotate_left(nodeZ);
-            insertFixUp(newNodeZ);
-        } else if ( father->isRightChild() && nodeZ->isLeftChild() ) {
-            rotate_left(nodeZ);
-            insertFixUp(newNodeZ);
+        auto new_Z = father; // keep pointer to father, since father will change to a different place after rotation
+
+        if ( father->isLeftChild() && node_Z->isRightChild() ) { // left - right case
+            rotate_left(father);
+        } else if ( father->isRightChild() && node_Z->isLeftChild() ) { // right - left case
+            rotate_right(father);
+        } else { // left - left and right - right case
+            new_Z = node_Z; // We don't actually need to change the z pointer to the father in this case, since no rotation happened
         }
+
+        // Case 3: Starts here
+
+        auto newZ_father = new_Z->get_father();
+        auto newZ_grandFather = new_Z->get_grandFather();
+
+        newZ_father->set_color(Color::BLACK);
+        newZ_grandFather->set_color(Color::RED);
+
+        if (new_Z->isLeftChild()) {
+            rotate_right(newZ_grandFather);
+        } else {
+            rotate_left(newZ_grandFather);
+        }
+
     }
 
-    // Case 3
-    father->set_color(Color::BLACK);
-    grandFather->set_color(Color::RED);
-
-    if (nodeZ->isLeftChild()) {
-        rotate_right(nodeZ);
-    } else {
-        rotate_left(nodeZ);
-    }
-
+    // Root might have become RED, must go back to BLACK
     _root->set_color(Color::BLACK);
 
 }
