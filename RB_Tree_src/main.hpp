@@ -101,6 +101,8 @@ public:
 
     void rotate_right(RBNode<K, V>* nodeX);
 
+    void transplant(RBNode<K, V>* node_U, RBNode<K, V>* node_V);
+
 private:
     RBNode<K, V>* _nullLeaf;
 
@@ -628,5 +630,27 @@ void RBTree<K, V>::rotate_right(RBNode<K, V>* nodeX) {
 
     nodeY->set_rightChild(nodeX);
     nodeX->set_father(nodeY);
+
+}
+
+template<typename K, typename V>
+void RBTree<K,V>::transplant(RBNode<K, V>* node_U, RBNode<K, V>* node_V) {
+
+    auto node_U_father = node_U->get_father();
+
+    if (node_U_father== _nullLeaf){ // if nodeU didn't have a father, then nodeU was the root
+        _root = node_V;
+    }
+    else if (node_U->isLeftChild()) {
+        node_U_father->set_leftChild(node_V);
+    }
+    else if (node_U->isRightChild()) {
+        node_U_father->set_rightChild(node_V);
+    } else {
+        std::cout << "this can't happen ----> transplant" << std::endl;
+    }
+
+    // node_v's new father will now be node_U's father
+    node_V->set_father(node_U_father);
 
 }
