@@ -360,15 +360,17 @@ void RBTree<K, V>::insertFixUp(RBNode<K, V>* node_Z) {
         insertFixUp(grandFather);
     }
 
-    // Case 2: Uncle is BLACK
+        // Case 2: Uncle is BLACK
     else {
         auto new_Z = father; // keep pointer to father, since father will change to a different place after rotation
 
-        if ( father->isLeftChild() && node_Z->isRightChild() ) { // left - right case
+        if (father->isLeftChild() && node_Z->isRightChild()) { // left - right case
             rotate_left(father);
-        } else if ( father->isRightChild() && node_Z->isLeftChild() ) { // right - left case
+        }
+        else if (father->isRightChild() && node_Z->isLeftChild()) { // right - left case
             rotate_right(father);
-        } else { // left - left and right - right case
+        }
+        else { // left - left and right - right case
             new_Z = node_Z; // We don't actually need to change the z pointer to the father in this case, since no rotation happened
         }
 
@@ -382,7 +384,8 @@ void RBTree<K, V>::insertFixUp(RBNode<K, V>* node_Z) {
 
         if (new_Z->isLeftChild()) {
             rotate_right(newZ_grandFather);
-        } else {
+        }
+        else {
             rotate_left(newZ_grandFather);
         }
 
