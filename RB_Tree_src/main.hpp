@@ -71,6 +71,9 @@ public:
     RBNode<K, V>* minimumFrom(RBNode<K, V>* node);
     RBNode<K, V>* maximumFrom(RBNode<K, V>* node);
 
+    RBNode<K, V>* find_with_key(RBNode<K, V>* rootOfSubtree, K key);
+    RBNode<K, V>* find_with_key(K key);
+
     void set_leftChild_updateFather(RBNode<K, V>* father, RBNode<K, V>* child);
     void set_rightChild_updateFather(RBNode<K, V>* father, RBNode<K, V>* child);
 
@@ -101,6 +104,7 @@ private:
 };
 
 
+
 template<typename K, typename V>
 RBNode<K, V>::RBNode() {
     _leftChild = nullptr;
@@ -110,6 +114,7 @@ RBNode<K, V>::RBNode() {
 //    _value = nullptr;
     _color_type = Color::BLACK;
 }
+
 
 template<typename K, typename V>
 RBNode<K, V>::RBNode(K key, V value, RBNode* leftChild, RBNode* rightChild, RBNode* parent) {
@@ -121,12 +126,13 @@ RBNode<K, V>::RBNode(K key, V value, RBNode* leftChild, RBNode* rightChild, RBNo
     _father = parent;
 }
 
-template<typename K, typename V>
-RBNode<K, V>::~RBNode() = default;
-
 
 template<typename K, typename V>
 RBNode<K, V>::RBNode(K key, V value) : RBNode<K, V>::RBNode(key, value, nullptr, nullptr, nullptr) {};
+
+
+template<typename K, typename V>
+RBNode<K, V>::~RBNode() = default;
 
 
 template<typename K, typename V>
@@ -134,27 +140,10 @@ V RBNode<K, V>::get_value() {
     return _value;
 }
 
+
 template<typename K, typename V>
 K RBNode<K, V>::get_key() {
     return _key;
-}
-
-
-template<typename K, typename V>
-RBTree<K, V>::~RBTree() = default;
-
-
-template<typename K, typename V>
-void RBTree<K, V>::set_leftChild_updateFather(RBNode<K, V>* father, RBNode<K, V>* child) {
-    father->set_leftChild(child);
-    child->set_father(father);
-}
-
-
-template<typename K, typename V>
-void RBTree<K, V>::set_rightChild_updateFather(RBNode<K, V>* father, RBNode<K, V>* child) {
-    father->set_rightChild(child);
-    child->set_father(father);
 }
 
 
@@ -207,6 +196,79 @@ char RBNode<K, V>::color_to_char() {
 
 
 template<typename K, typename V>
+void RBNode<K, V>::set_father(RBNode* n) {
+    _father = n;
+}
+
+
+template<typename K, typename V>
+void RBNode<K, V>::set_leftChild(RBNode* n) {
+    _leftChild = n;
+}
+
+
+template<typename K, typename V>
+void RBNode<K, V>::set_rightChild(RBNode* n) {
+    _rightChild = n;
+}
+
+
+template<typename K, typename V>
+bool RBNode<K, V>::isRightChild() {
+    return this->get_father() != nullptr && this->get_father()->get_rightChild() == this;
+}
+
+
+template<typename K, typename V>
+bool RBNode<K, V>::isLeftChild() {
+    return this->get_father() != nullptr && this->get_father()->get_leftChild() == this;
+}
+
+
+template<typename K, typename V>
+RBNode<K, V>* RBNode<K, V>::get_brother() {
+    if (isLeftChild()) {
+        return get_father()->get_rightChild();
+    }
+    else if (isRightChild()) {
+        return get_father()->get_leftChild();
+    }
+    else {
+        std::cout << "This can't happen";
+        return nullptr;
+    }
+}
+
+
+template<typename K, typename V>
+RBNode<K, V>* RBNode<K, V>::get_uncle() {
+    return get_father()->get_brother();
+}
+
+
+template<typename K, typename V>
+RBNode<K, V>* RBNode<K, V>::get_grandFather() {
+    return get_father()->get_father();
+}
+
+
+
+
+
+template<typename K, typename V>
+RBTree<K, V>::RBTree() {
+    _nullLeaf = new RBNode<K, V>();
+    _root = _nullLeaf;
+    _root->set_father(_nullLeaf);
+    _size = 0;
+}
+
+
+template<typename K, typename V>
+RBTree<K, V>::~RBTree() = default;
+
+
+template<typename K, typename V>
 RBNode<K, V>* RBTree<K, V>::minimumFrom(RBNode<K, V>* node) {
     auto leftChild = node->get_leftChild();
     if (leftChild != nullptr) {
@@ -233,33 +295,6 @@ RBNode<K, V>* RBTree<K, V>::maximumFrom(RBNode<K, V>* node) {
 
 
 template<typename K, typename V>
-void RBNode<K, V>::set_father(RBNode* n) {
-    _father = n;
-}
-
-
-template<typename K, typename V>
-void RBNode<K, V>::set_leftChild(RBNode* n) {
-    _leftChild = n;
-}
-
-
-template<typename K, typename V>
-void RBNode<K, V>::set_rightChild(RBNode* n) {
-    _rightChild = n;
-}
-
-
-template<typename K, typename V>
-RBTree<K, V>::RBTree() {
-    _nullLeaf = new RBNode<K, V>();
-    _root = _nullLeaf;
-    _root->set_father(_nullLeaf);
-    _size = 0;
-}
-
-
-template<typename K, typename V>
 RBNode<K, V>* RBTree<K, V>::get_successorOf(RBNode<K, V>* node) {
     // If node has right child, then the successor is the min of the right subtree
     auto rightChild = node->get_rightChild();
@@ -279,55 +314,33 @@ RBNode<K, V>* RBTree<K, V>::get_successorOf(RBNode<K, V>* node) {
 
 
 template<typename K, typename V>
-bool RBNode<K, V>::isRightChild() {
-    return this->get_father() != nullptr && this->get_father()->get_rightChild() == this;
+void RBTree<K, V>::set_leftChild_updateFather(RBNode<K, V>* father, RBNode<K, V>* child) {
+    father->set_leftChild(child);
+    child->set_father(father);
 }
 
 
 template<typename K, typename V>
-bool RBNode<K, V>::isLeftChild() {
-    return this->get_father() != nullptr && this->get_father()->get_leftChild() == this;
+void RBTree<K, V>::set_rightChild_updateFather(RBNode<K, V>* father, RBNode<K, V>* child) {
+    father->set_rightChild(child);
+    child->set_father(father);
 }
 
-template<typename K, typename V>
-RBNode<K, V>* RBNode<K, V>::get_brother() {
-    if (isLeftChild()) {
-        return get_father()->get_rightChild();
-    }
-    else if (isRightChild()) {
-        return get_father()->get_leftChild();
-    }
-    else {
-        std::cout << "This can't happen";
-        return nullptr;
-    }
-}
-
-template<typename K, typename V>
-RBNode<K, V>* RBNode<K, V>::get_uncle() {
-    return get_father()->get_brother();
-}
-
-template<typename K, typename V>
-RBNode<K, V>* RBNode<K, V>::get_grandFather() {
-    return get_father()->get_father();
-}
 
 template<typename K, typename V>
 void RBTree<K, V>::remove(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
 
 
-//Missing implementation
 }
 
 
 template<typename K, typename V>
 bool RBTree<K, V>::remove(K key) {
 
-    RBNode<K, V>* node_to_remove = new RBNode<K,V>();
+    RBNode<K, V>* node_to_remove = find_with_key(key);
 
-    if (node_to_remove != nullptr) {
-        remove(_root,node_to_remove);
+    if (node_to_remove != _nullLeaf) {
+        remove(_root, node_to_remove);
         _size -= 1;
         return true;
     }
@@ -335,11 +348,38 @@ bool RBTree<K, V>::remove(K key) {
 
 }
 
+
 template<typename K, typename V>
-void RBTree<K,V>::removeFixUp(RBNode<K, V>* node_Z) {
+void RBTree<K, V>::removeFixUp(RBNode<K, V>* node_Z) {
 
 }
 
+
+template<typename K, typename V>
+RBNode<K, V>* RBTree<K, V>::find_with_key(RBNode<K, V>* rootOfSubtree, K key) {
+
+    K keyOfRoot = rootOfSubtree->get_key();
+
+    if (rootOfSubtree != _nullLeaf) {
+        if (key == keyOfRoot){
+            return rootOfSubtree;
+        }
+        if (key < keyOfRoot) {
+            return find_with_key(rootOfSubtree->get_leftChild(), key);
+        }
+        else {
+            return find_with_key(rootOfSubtree->get_rightChild(), key);
+        }
+    }
+
+    return rootOfSubtree;
+}
+
+
+template<typename K, typename V>
+RBNode<K, V>* RBTree<K, V>::find_with_key(K key) {
+    return find_with_key(_root, key);
+}
 
 
 template<typename K, typename V>
@@ -456,6 +496,7 @@ void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
     }
 
 }
+
 
 template<typename K, typename V>
 void RBTree<K, V>::iterate_tree(FILE* file) {
@@ -629,6 +670,7 @@ void RBTree<K, V>::rotate_right(RBNode<K, V>* nodeX) {
     nodeX->set_father(nodeY);
 
 }
+
 
 template<typename K, typename V>
 void RBTree<K, V>::transplant(RBNode<K, V>* node_U, RBNode<K, V>* node_V) {
