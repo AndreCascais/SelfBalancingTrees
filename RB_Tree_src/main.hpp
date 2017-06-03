@@ -155,8 +155,6 @@ template<typename K, typename V>
 void RBTree<K, V>::set_leftChild(RBNode<K, V>* father, RBNode<K, V>* child) {
     father->set_leftChild(child);
     child->set_father(father);
-    child->set_color(Color::RED);
-    insertFixUp(child);
 }
 
 
@@ -164,8 +162,6 @@ template<typename K, typename V>
 void RBTree<K, V>::set_rightChild(RBNode<K, V>* father, RBNode<K, V>* child) {
     father->set_rightChild(child);
     child->set_father(father);
-    child->set_color(Color::RED);
-    insertFixUp(child);
 }
 
 
@@ -346,14 +342,14 @@ void RBTree<K, V>::remove_value(K key) {
 template<typename K, typename V>
 void RBTree<K, V>::insertFixUp(RBNode<K, V>* nodeZ) {
 
-    // We only need to fix the tree if the parent was also red
-    if (nodeZ->get_father()->get_color() != Color::RED) {
-        return;
-    }
-
     RBNode<K, V>* nodeY = nodeZ->get_uncle();
     RBNode<K, V>* father = nodeZ->get_father();
     RBNode<K, V>* grandFather = nodeZ->get_grandFather();
+
+    // We only need to fix the tree if the parent was also red
+    if (father->get_color() != Color::RED) {
+        return;
+    }
 
 
     // Case 1: Uncle is RED - recolor father and uncle and move z pointer and start again.
@@ -368,8 +364,26 @@ void RBTree<K, V>::insertFixUp(RBNode<K, V>* nodeZ) {
     }
 
     // Case 2: Uncle is BLACK
+    else {
+        auto newNodeZ = father;
+        if ( father->isLeftChild() && nodeZ->isRightChild() ) {
+            rotate_left(nodeZ);
+            insertFixUp(newNodeZ);
+        } else if ( father->isRightChild() && nodeZ->isLeftChild() ) {
+            rotate_left(nodeZ);
+            insertFixUp(newNodeZ);
+        }
+    }
 
+    // Case 3
+    father->set_color(Color::BLACK);
+    grandFather->set_color(Color::RED);
 
+    if (nodeZ->isLeftChild()) {
+        rotate_right(nodeZ);
+    } else {
+        rotate_left(nodeZ);
+    }
 
     _root->set_color(Color::BLACK);
 
@@ -392,7 +406,6 @@ void RBTree<K, V>::insert(K key, V value) {
 }
 
 
-// Assuming you can't add Nodes with the same key
 template<typename K, typename V>
 void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
     V newValue = newNode->get_value();
@@ -404,19 +417,26 @@ void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
         auto rightNode = rootOfSubtree->get_rightChild();
         if (rightNode == _nullLeaf) {
             set_rightChild(rootOfSubtree, newNode);
+            newNode->set_color(Color::RED);
+            insertFixUp(newNode);
         }
         else {
             insert(rightNode, newNode);
         }
     }
-    else { // Insert on the left
+    else if (newValue < oldValue) { // Insert on the left
         auto leftNode = rootOfSubtree->get_leftChild();
         if (leftNode == _nullLeaf) {
             set_leftChild(rootOfSubtree, newNode);
+            newNode->set_color(Color::RED);
+            insertFixUp(newNode);
         }
         else {
             insert(leftNode, newNode);
         }
+    }
+    else {
+        std::cout << "For now assuming you can't add nodes with the same key" << std::endl;
     }
 
 }
