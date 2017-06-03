@@ -43,6 +43,7 @@ public:
     void destroy_tree();
     void add_value(T);
 	void remove_value(T v);
+	Node<T>* lookup(T v);
 
 private:
     void destroy_tree(Node<T>*);
@@ -155,13 +156,11 @@ template <class T> SplayTree<T>::~SplayTree() {
 }
 
 template <class T> void SplayTree<T>::add_value(T v) {
-    cout << "Adding " << v << endl;
     if (root == NULL) {
         root = new Node<T>(v);
     }
 	else {
         Node<T>* new_node = add_value(root, v);
-		cout << "Splaying " << v << endl;
         splay(new_node);
     }
 
@@ -180,7 +179,6 @@ template <class T> void SplayTree<T>::destroy_tree(Node<T>* node) {
 }
 
 template <class T> void SplayTree<T>::remove_value(T v) {
-    cout << "Removing " << v << endl;
     Node<T>* found_node = find_value(root, v);
 	if (found_node != NULL) {
 		splay(found_node);
@@ -251,6 +249,10 @@ template <class T> Node<T>* SplayTree<T>::add_value(Node<T>* node, T v) { // Ass
     }
 }
 
+template <class T> Node<T>* SplayTree<T>::lookup(T v) {
+	return find_value(root, v);
+}
+
 template <class T> Node<T>* SplayTree<T>::find_value(Node<T>* node, T v) {
     T value = node->get_value();
     if (v == value) {
@@ -272,26 +274,27 @@ template <class T> void SplayTree<T>::remove_root() {
 	Node<T>* old_root = root;
 	Node<T>* left_node = root->get_left();
 	Node<T>* right_node = root->get_right();
-    if (left_node == NULL) {
+	if (left_node == NULL && right_node == NULL) { // only element
+		root = NULL;
+	}
+    else if (left_node == NULL) {
         root = right_node;
+		root->set_father(NULL);
     }
 	else if (right_node == NULL) { // only have left son
 		root = left_node;
+		root->set_father(NULL);
 	}
 	
-	else {	
+	else {
+				
 		Node<T>* new_root = left_node->get_max();
-		new_root->get_father()->set_son(new_root->get_left());
-		
-		new_root->set_father(NULL);
+		root = left_node;
+			
+		splay(new_root);
 		root = new_root;
-		
-		if (left_node->get_value() != new_root->get_value())
-			new_root->set_left(left_node);
-		else // case where we new root is the left node (dont want cycles)
-			new_root->set_left(left_node->get_left());
-		new_root->set_right(right_node);
-		root = new_root;
+		root->set_right(right_node);
+		root->set_father(NULL);
 		
 	}
 	delete old_root;
@@ -300,15 +303,16 @@ template <class T> void SplayTree<T>::remove_root() {
 
 template <class T> void SplayTree<T>::splay(Node<T>* node) {
 
+	if (node == root) { // already at root, dont need to splay
+		return;
+	}
 	Node<T>* father = node->get_father();
 
 	if (father->get_father() == NULL) { // zig or zag
 		if (father->get_left() == node) {// zig
-			cout << "zig" << endl;
 			rotate_right(father);
 		}
 		else { // zag
-			cout << "zag" << endl;
 			rotate_left(father);
 		}
 	}
@@ -316,26 +320,21 @@ template <class T> void SplayTree<T>::splay(Node<T>* node) {
 		Node<T>* grand_father = father->get_father();
 		if (grand_father->get_left() == father) { //zig-zig or zig-zag left
 			if (father->get_left() == node) { //zig-zig
-				cout << "zig-zig" << endl;
 				rotate_right(grand_father);
 				rotate_right(father);
 					
 			}
 			else { //zig-zag left
-				cout << "zig-zag left" << endl;
 				rotate_left(father);
 				rotate_right(grand_father);
 			}
 		}
 		else { //zag-zag or zig-zag right
 			if (father->get_right() == node) { //zag-zag
-				cout << "zag-zag" << endl;
-			
 				rotate_left(grand_father);
 				rotate_left(father);
 			}
 			else { //zig-zag right
-				cout << "zig-zag right" << endl;
 				rotate_right(father);
 				rotate_left(grand_father);
 			}
@@ -351,87 +350,101 @@ template <class T> void SplayTree<T>::splay(Node<T>* node) {
 
 template <class T> void SplayTree<T>::iterate_tree() {
 	
-    printf("l - left\n");
-    printf("r - right\n");
-    printf("f - father\n");
-    printf("root - root\n");
-    printf("quit - quit\n");
-    printf("add - quit\n");
-    printf("remove - quit\n");
-	
-	char s[10];
+    int i, v, option = 0;
 	if (file != NULL) {
-		while (1) {
-			fscanf(file, "%s", s);
-			if (strcmp(s, "add") == 0) {
-				int v;
-				fscanf(file, "%d", &v);
-				this->add_value(v);
-			} 
-			else if (strcmp(s, "remove") == 0) {
-				int v;
-				fscanf(file, "%d", &v);
-				this->remove_value(v);
-			}
-			else if (strcmp(s, "end") == 0)
-				break;
+		int option, n_inserts, n_removes, n_lookups;
+		fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
+		for (i = 0; i < n_inserts; i++) {
+			fscanf(file, "%d", &v);
+			add_value(v);
+		}
+		for (i = 0; i < n_removes; i++) {
+			fscanf(file, "%d", &v);
+			remove_value(v);
+		}
+		for (i = 0; i < n_lookups; i++) {
+			fscanf(file, "%d", &v);
+			lookup(v);
 		}
 	}
-	printf("Done reading from file\n");
+	
+	if (option == 0) {
+		destroy_tree();
+		return;
+	}
+		
+	char help_str[] = "Done reading from file\n"
+		"l - left\n"
+		"r - right\n"
+	    "f - father\n"
+	    "t - root\n"
+	    "q - quit\n"
+	    "a v  - adds value v to tree\n"
+	    "d v - deletes value v from tree\n";
+	
+	printf("%s", help_str);
+	char cmd;
+	
 	Node<T>* n = root;
     while (1) {
 	
 		if (n != NULL) {
         	n->print_node();
         }
-        scanf("%s", s);
+        scanf("\n%c", &cmd);
+		switch(cmd) {
+			case 'l' : {
+            	Node<T>* left = n->get_left();
+            	if (left == NULL)
+                	printf("Not going to NULL Node\n");
+            	else
+                	n = left;
+				break;	
+			}
+		
+			case 'r' : {
+				Node<T>* right = n->get_right();
+				if (right == NULL) {
+					printf("Not going to NULL Node\n");
+				}
+				else {
+					n = right;
+				}
+				break;	
+			}
 
-        if (strcmp(s, "l") == 0) {
-            Node<T>* left = n->get_left();
-            if (left == NULL)
-                printf("Not going to NULL Node\n");
-            else
-                n = left;
-        } 
-        else if (strcmp(s, "r") == 0) {
-            Node<T>* right = n->get_right();
-            if (right == NULL) {
-                printf("Not going to NULL Node\n");
-            }
-            else {
-                n = right;
-            }
-        } 
-        else if (strcmp(s, "f") == 0) {
-            if (n == root) {
-                printf("Already at root\n");
-            }
-            else {
-                n = n->get_father();
-            }
-        } 
-        else if (strcmp(s, "root") == 0) {
-            n = root;
-        } 
-        else if (strcmp(s, "quit") == 0) {
-			this->destroy_tree();
-            return;
-        } 
-		else if (strcmp(s, "add") == 0) {
-			int v;
-			scanf("%d", &v);
-			this->add_value(v);
-			n = root;
-		} 
-		else if (strcmp(s, "remove") == 0) {
-			int v;
-			scanf("%d", &v);
-			this->remove_value(v);
-			n = root;
+        	
+			case 't' : {
+				if (n == root) {
+					printf("Already at root\n");
+				}
+				else {
+					n = n->get_father();
+				}
+			}
+			break;
+        
+			case 'q' : {
+				this->destroy_tree();
+            	return;
+			}
+    
+			case 'a' : {
+				scanf("%d", &v);
+				this->add_value(v);
+				n = root; 
+				
+			}
+			break;
+			case 'd' : {
+				scanf("%d", &v);
+				this->remove_value(v);
+				n = root;
+			}
+			break;
+			default :
+            	printf("Unknown cmd\n");
 		}
-		else {
-            printf("Unknown cmd\n");
-        }
     }
 }
 
