@@ -398,6 +398,12 @@ template<typename K, typename V>
 void RBTree<K, V>::insert(K key, V value) {
 
     auto newNode = new RBNode<K, V>(key, value);
+
+    //tmp hack
+    newNode->set_leftChild(_nullLeaf);
+    newNode->set_rightChild(_nullLeaf);
+    //tmp hack
+
     if (_root == _nullLeaf) {
         std::cout << "We have a root now!" << std::endl;
         _root = newNode;
@@ -417,7 +423,7 @@ void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
     V oldValue = rootOfSubtree->get_value();
     K oldKey = rootOfSubtree->get_key();
 
-    if (newValue > oldValue) { // Insert on the right
+    if (newKey > oldKey) { // Insert on the right
         auto rightNode = rootOfSubtree->get_rightChild();
         if (rightNode == _nullLeaf) {
             set_rightChild(rootOfSubtree, newNode);
@@ -428,7 +434,7 @@ void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
             insert(rightNode, newNode);
         }
     }
-    else if (newValue < oldValue) { // Insert on the left
+    else if (newKey < oldKey) { // Insert on the left
         auto leftNode = rootOfSubtree->get_leftChild();
         if (leftNode == _nullLeaf) {
             set_leftChild(rootOfSubtree, newNode);
