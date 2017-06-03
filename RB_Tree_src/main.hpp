@@ -152,6 +152,10 @@ K RBNode<K, V>::get_key() {
 
 
 template<typename K, typename V>
+RBTree<K, V>::~RBTree() = default;
+
+
+template<typename K, typename V>
 void RBTree<K, V>::set_leftChild(RBNode<K, V>* father, RBNode<K, V>* child) {
     father->set_leftChild(child);
     child->set_father(father);
@@ -563,15 +567,13 @@ void RBTree<K, V>::destroy_tree(RBNode<K, V>* node) {
 
 
 template<typename K, typename V>
-RBTree<K, V>::~RBTree() = default;
-
-template<typename K, typename V>
 void RBTree<K, V>::rotate_left(RBNode<K, V>* nodeX) {
 
     RBNode<K, V>* nodeY;
 
     nodeY = nodeX->get_rightChild();
     nodeX->set_rightChild(nodeY->get_leftChild());
+
     if (nodeX->get_rightChild() != _nullLeaf) {
         nodeX->get_rightChild()->set_father(nodeX);
     }
@@ -588,7 +590,7 @@ void RBTree<K, V>::rotate_left(RBNode<K, V>* nodeX) {
         nodeX->get_father()->set_rightChild(nodeY);
     }
     else {
-        std::cout << "this can't happen";
+        std::cout << "this can't happen ----> rotate_left" << std::endl;
     }
 
     nodeY->set_leftChild(nodeX);
@@ -600,11 +602,11 @@ void RBTree<K, V>::rotate_left(RBNode<K, V>* nodeX) {
 template<typename K, typename V>
 void RBTree<K, V>::rotate_right(RBNode<K, V>* nodeX) {
 
-
     RBNode<K, V>* nodeY;
 
     nodeY = nodeX->get_leftChild();
     nodeX->set_leftChild(nodeY->get_rightChild());
+
     if (nodeX->get_leftChild() != _nullLeaf) {
         nodeX->get_leftChild()->set_father(nodeX);
     }
@@ -621,11 +623,10 @@ void RBTree<K, V>::rotate_right(RBNode<K, V>* nodeX) {
         nodeX->get_father()->set_rightChild(nodeY);
     }
     else {
-        std::cout << "this can't happen";
+        std::cout << "this can't happen ----> rotate_right" << std::endl;
     }
 
     nodeY->set_rightChild(nodeX);
     nodeX->set_father(nodeY);
-
 
 }
