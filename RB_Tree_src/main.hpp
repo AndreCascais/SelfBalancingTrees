@@ -3,6 +3,7 @@
 // C++ Headers
 #include <map>
 #include <iostream>
+#include <algorithm>
 
 // C Headers
 #include <cstring>
@@ -93,6 +94,12 @@ public:
     void iterate_tree(FILE* f);
     void destroy_tree();
 
+
+    bool property2();
+    bool property4(RBNode<K, V>* n);
+    bool property5(RBNode<K, V>* n);
+    bool verify();
+
 private:
     RBNode<K, V>* _nullLeaf;
 
@@ -101,8 +108,8 @@ private:
     int _size;
 
     void destroy_tree(RBNode<K, V>* node);
+    int black_height(RBNode<K, V>* n);
 };
-
 
 
 template<typename K, typename V>
@@ -250,9 +257,6 @@ template<typename K, typename V>
 RBNode<K, V>* RBNode<K, V>::get_grandFather() {
     return get_father()->get_father();
 }
-
-
-
 
 
 template<typename K, typename V>
@@ -694,4 +698,94 @@ void RBTree<K, V>::transplant(RBNode<K, V>* node_U, RBNode<K, V>* node_V) {
     node_V->set_father(node_U_father);
 
 }
+
+template<typename K, typename V>
+bool RBTree<K, V>::verify() {
+
+    // Property 1. Every node is either red or black.
+    // Guaranteed by using enum class Color
+
+    // Property 2. The root is black.
+    if (!property2()) {
+        std::cout << " !!Violated-Property-1!! : root is red";
+        return false;
+    };
+
+    // Property 3. Every leaf (NIL) is black.
+    // Guaranteed by using nullLeaf to represent leaves.
+
+    // Property 4. If a node is red, then both its children are black.
+    if (!property4(_root)) {
+        std::cout << " !!Violated-Property-4!!";
+        return false;
+    };
+
+    // Property 5. For each node, all simple paths from the node to descendant leaves contain the same number of black nodes.
+    if (!property5(_root)) {
+        std::cout << " !!Violated-Property-5!!";
+        return false;
+    };
+
+    return true;
+}
+
+
+template<typename K, typename V>
+bool RBTree<K, V>::property2() {
+    return (_root->get_color() == Color::BLACK);
+};
+
+
+template<typename K, typename V>
+bool RBTree<K, V>::property4(RBNode<K, V>* n) {
+    if (n == _nullLeaf) {
+        return true;
+    }
+
+    auto leftChild = n->get_leftChild();
+    auto rightChild = n->get_rightChild();
+
+    if (n->get_color() == Color::RED) {
+        if (leftChild->get_color() == Color::RED) {
+            return false;
+        }
+        if (rightChild->get_color() == Color::RED) {
+            return false;
+        }
+    }
+
+    return property4(leftChild) && property4(rightChild);
+
+};
+
+
+template<typename K, typename V>
+bool RBTree<K, V>::property5(RBNode<K, V>* n) {
+
+    auto left_child = n->get_leftChild();
+    auto right_child = n->get_rightChild();
+    int lH = black_height(left_child);
+    int rH = black_height(right_child);
+
+    if (lH != rH) {
+        return false;
+    }
+
+    return property5(left_child) && property5(right_child);
+
+};
+
+
+template<typename K, typename V>
+int RBTree<K, V>::black_height(RBNode<K, V>* n) {
+
+    if (n == _nullLeaf) {
+        return 0;
+    }
+
+    bool is_n_black = (n->get_color() == Color::BLACK);
+    int height = is_n_black ? 1 : 0;
+    return height + std::max(black_height(n->get_leftChild()), black_height(n->get_rightChild()));
+
+};
 
