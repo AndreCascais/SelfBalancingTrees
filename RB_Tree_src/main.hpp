@@ -84,7 +84,7 @@ public:
 
     bool remove(K key);
     void remove(RBNode<K, V>* node_Z);
-    void removeFixUp(RBNode<K, V>* node_Z);
+    void removeFixUp(RBNode<K, V>* node_X);
 
     void rotate_left(RBNode<K, V>* nodeX);
     void rotate_right(RBNode<K, V>* nodeX);
@@ -393,7 +393,83 @@ bool RBTree<K, V>::remove(K key) {
 
 
 template<typename K, typename V>
-void RBTree<K, V>::removeFixUp(RBNode<K, V>* node_Z) {
+void RBTree<K, V>::removeFixUp(RBNode<K, V>* node_X) {
+
+    if (node_X == _root || node_X->get_color() != Color::BLACK) {
+        node_X->set_color(Color::BLACK);
+        return;
+    }
+
+    auto node_W = node_X->get_brother();
+    auto father = node_X->get_father();
+
+    // Case 1: Brother is RED
+    if (node_W->get_color() == Color::RED) {
+
+        // Recolor brother and father
+        node_W->set_color(Color::BLACK);
+        father->set_color(Color::RED);
+
+        if (node_X->isLeftChild()) {
+            rotate_left(father);
+        }
+        else if (node_X->isRightChild()) {
+            rotate_right(father);
+        }
+        else {
+            std::cout << "WTFFF" << std::endl;
+        }
+    }
+
+    // Case 2: Brother is BLACK and has two BLACK children
+    if (node_W->get_leftChild()->get_color() == Color::BLACK && node_W->get_rightChild()->get_color() == Color::BLACK) {
+        // Recolor brother and start again from node X's father
+        node_W->set_color(Color::RED);
+        removeFixUp(father);
+    }
+
+    // Case 3: Brother is BLACK with only one BLACK child
+    else {
+
+        // NodeX is right Child and BLACK child of brother is on the left
+        if (node_X->isRightChild() && node_W->get_leftChild()->get_color() == Color::BLACK) {
+
+            node_W->get_rightChild()->set_color(Color::BLACK);
+            node_W->set_color(Color::RED);
+            rotate_left(node_W);
+            node_W = node_X->get_father()->get_leftChild();
+
+        }
+
+        // NodeX is left Child and BLACK child of brother is on the right
+        else if (node_X->isLeftChild() && node_W->get_rightChild()->get_color() == Color::BLACK) {
+
+            node_W->get_leftChild()->set_color(Color::BLACK);
+            node_W->set_color(Color::RED);
+            rotate_right(node_W);
+            node_W = node_X->get_father()->get_rightChild();
+
+        }
+
+        // Case 4: Not sure??
+
+        auto father = node_X->get_father();
+
+        node_W->set_color(father->get_color());
+        father->set_color(Color::BLACK);
+
+        if (node_X->isLeftChild()){
+            node_W->get_rightChild()->set_color(Color::BLACK);
+            rotate_left(father);
+        } else if( node_X->isRightChild() ){
+            node_W->get_leftChild()->set_color(Color::BLACK);
+            rotate_right(father);
+        }
+
+
+        removeFixUp(_root);
+
+    }
 
 }
 
@@ -576,14 +652,14 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
     RBNode<K, V>* n = _root;
     while (true) {
 
-        if (n != NULL) {
+        if (n != nullptr) {
             n->print_node();
         }
         scanf("%s", s);
 
         if (strcmp(s, "l") == 0) {
             RBNode<K, V>* left = n->get_leftChild();
-            if (left == NULL) {
+            if (left == nullptr) {
                 printf("Not going to NULL Node\n");
             }
             else {
@@ -592,7 +668,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         }
         else if (strcmp(s, "r") == 0) {
             RBNode<K, V>* right = n->get_rightChild();
-            if (right == NULL) {
+            if (right == nullptr) {
                 printf("Not going to NULL Node\n");
             }
             else {
