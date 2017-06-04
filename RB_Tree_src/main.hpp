@@ -83,7 +83,7 @@ public:
     void insertFixUp(RBNode<K, V>* node_Z);
 
     bool remove(K key);
-    void remove(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode);
+    void remove(RBNode<K, V>* node_Z);
     void removeFixUp(RBNode<K, V>* node_Z);
 
     void rotate_left(RBNode<K, V>* nodeX);
@@ -332,8 +332,47 @@ void RBTree<K, V>::set_rightChild_updateFather(RBNode<K, V>* father, RBNode<K, V
 
 
 template<typename K, typename V>
-void RBTree<K, V>::remove(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
+void RBTree<K, V>::remove(RBNode<K, V>* node_Z) {
 
+
+    auto node_Y = node_Z;
+    RBNode<K, V>* node_X;
+
+    Color y_original_color = node_Y->get_color();
+
+    if (node_Z->get_leftChild() == _nullLeaf) { // leftChild is a nullLeaf, rightChild may or may not be a nullLeaf
+        node_X = node_Z->get_rightChild();
+        transplant(node_Z, node_Z->get_rightChild());
+    }
+    else if (node_Z->get_rightChild() == _nullLeaf) { // rightChild is a nullLeaf but leftChild isn't
+        node_X = node_Z->get_leftChild();
+        transplant(node_Z, node_Z->get_leftChild());
+    }
+    else { // neither child is a nullLeaf
+        node_Y = get_successorOf(node_Z);
+        y_original_color = node_Y->get_color();
+        node_X = node_Y->get_rightChild();
+
+        if (node_Y->get_father() == node_Z) {
+            node_X->set_father(node_Y);
+        }
+        else {
+            transplant(node_Y, node_Y->get_rightChild());
+            node_Y->set_rightChild(node_Z->get_rightChild());
+            node_Y->get_rightChild()->set_father(node_Y);
+        }
+
+        transplant(node_Z, node_Y);
+
+        node_Y->set_leftChild(node_Z->get_leftChild());
+        node_Y->get_leftChild()->set_father(node_Y);
+        node_Y->set_color(node_Z->get_color());
+    }
+
+
+    if (y_original_color == Color::BLACK) {
+        removeFixUp(node_X);
+    }
 
 }
 
@@ -344,7 +383,7 @@ bool RBTree<K, V>::remove(K key) {
     RBNode<K, V>* node_to_remove = find_with_key(key);
 
     if (node_to_remove != _nullLeaf) {
-        remove(_root, node_to_remove);
+        remove(node_to_remove);
         _size -= 1;
         return true;
     }
@@ -365,7 +404,7 @@ RBNode<K, V>* RBTree<K, V>::find_with_key(RBNode<K, V>* rootOfSubtree, K key) {
     K keyOfRoot = rootOfSubtree->get_key();
 
     if (rootOfSubtree != _nullLeaf) {
-        if (key == keyOfRoot){
+        if (key == keyOfRoot) {
             return rootOfSubtree;
         }
         if (key < keyOfRoot) {
