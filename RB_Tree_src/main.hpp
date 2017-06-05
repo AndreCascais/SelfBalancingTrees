@@ -318,20 +318,6 @@ RBNode<K, V>* RBTree<K, V>::get_successorOf(RBNode<K, V>* node) {
 
 
 template<typename K, typename V>
-void RBTree<K, V>::set_leftChild_updateFather(RBNode<K, V>* father, RBNode<K, V>* child) {
-    father->set_leftChild(child);
-    child->set_father(father);
-}
-
-
-template<typename K, typename V>
-void RBTree<K, V>::set_rightChild_updateFather(RBNode<K, V>* father, RBNode<K, V>* child) {
-    father->set_rightChild(child);
-    child->set_father(father);
-}
-
-
-template<typename K, typename V>
 void RBTree<K, V>::remove(RBNode<K, V>* node_Z) {
 
 
@@ -591,7 +577,8 @@ void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
     if (newKey > oldKey) { // Insert on the right
         auto rightNode = rootOfSubtree->get_rightChild();
         if (rightNode == _nullLeaf) {
-            set_rightChild_updateFather(rootOfSubtree, newNode);
+            rootOfSubtree->set_rightChild(newNode);
+            newNode->set_father(rootOfSubtree);
             newNode->set_color(Color::RED);
             insertFixUp(newNode);
         }
@@ -602,7 +589,8 @@ void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
     else if (newKey < oldKey) { // Insert on the left
         auto leftNode = rootOfSubtree->get_leftChild();
         if (leftNode == _nullLeaf) {
-            set_leftChild_updateFather(rootOfSubtree, newNode);
+            rootOfSubtree->set_leftChild(newNode);
+            newNode->set_father(rootOfSubtree);
             newNode->set_color(Color::RED);
             insertFixUp(newNode);
         }
