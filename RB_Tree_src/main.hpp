@@ -241,7 +241,7 @@ RBNode<K, V>* RBNode<K, V>::get_brother() {
         return get_father()->get_leftChild();
     }
     else {
-        std::cout << "This can't happen";
+        std::cout << "This can't happen ---- brother" << std::endl;
         return nullptr;
     }
 }
@@ -640,14 +640,14 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
     RBNode<K, V>* n = _root;
     while (true) {
 
-        if (n != nullptr) {
+        if (n != _nullLeaf) {
             n->print_node();
         }
         scanf("%s", s);
 
         if (strcmp(s, "l") == 0) {
             RBNode<K, V>* left = n->get_leftChild();
-            if (left == nullptr) {
+            if (left == _nullLeaf) {
                 printf("Not going to NULL Node\n");
             }
             else {
@@ -656,7 +656,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         }
         else if (strcmp(s, "r") == 0) {
             RBNode<K, V>* right = n->get_rightChild();
-            if (right == nullptr) {
+            if (right == _nullLeaf) {
                 printf("Not going to NULL Node\n");
             }
             else {
