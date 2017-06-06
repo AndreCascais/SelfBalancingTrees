@@ -619,43 +619,47 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 
     int k, option = 1;
     if (file != NULL) {
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
         int n_inserts, n_removes, n_lookups;
         fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
         for (int i = 0; i < n_inserts; i++) {
             fscanf(file, "%d", &k);
             insert(k, 0);
 
-            if (i % 1000 == 0) {
-                std::cout << i << std::endl;
-                bool result = verify();
-                if (!result) {
-                    std::cout << "some property failed" << std::endl;
-                }
-            }
+//            if (i % 1000 == 0) {
+//                std::cout << i << std::endl;
+//                bool result = verify();
+//                if (!result) {
+//                    std::cout << "some property failed" << std::endl;
+//                }
+//            }
         }
         for (int i = 0; i < n_removes; i++) {
             fscanf(file, "%d", &k);
             remove(k);
 
-            if (i % 1000 == 0) {
-                std::cout << i << std::endl;
-                bool result = verify();
-                if (!result) {
-                    std::cout << "some property failed" << std::endl;
-                }
-            }
+//            if (i % 1000 == 0) {
+//                std::cout << i << std::endl;
+//                bool result = verify();
+//                if (!result) {
+//                    std::cout << "some property failed" << std::endl;
+//                }
+//            }
         }
         for (int i = 0; i < n_lookups; i++) {
             fscanf(file, "%d", &k);
             find_with_key(k);
-            if (i % 1000 == 0) {
-                std::cout << i << std::endl;
-                bool result = verify();
-                if (!result) {
-                    std::cout << "some property failed" << std::endl;
-                }
-            }
+//            if (i % 1000 == 0) {
+//                std::cout << i << std::endl;
+//                bool result = verify();
+//                if (!result) {
+//                    std::cout << "some property failed" << std::endl;
+//                }
+//            }
         }
+        std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
+        std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"<< std::endl;
     }
 
     if (option == 0) {
