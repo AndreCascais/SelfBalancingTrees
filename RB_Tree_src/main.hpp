@@ -674,59 +674,53 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         }
         scanf("\n%c", &cmd);
         switch (cmd) {
-            case 'l' : {
+            case 'l' :
                 RBNode<K, V>* left = n->get_leftChild();
-                if (left == NULL) {
-                    printf("Not going to NULL Node\n");
+                if (left == _nullLeaf) {
+                    printf("Not going to _nullLeaf\n");
                 }
                 else {
                     n = left;
                 }
                 break;
-            }
 
-            case 'r' : {
+            case 'r' :
                 RBNode<K, V>* right = n->get_rightChild();
-                if (right == NULL) {
-                    printf("Not going to NULL Node\n");
+                if (right == _nullLeaf) {
+                    printf("Not going to _nullLeaf\n");
                 }
                 else {
                     n = right;
                 }
                 break;
-            }
 
-
-            case 't' : {
+            case 't' :
                 if (n == _root) {
                     printf("Already at root\n");
                 }
                 else {
                     n = n->get_father();
                 }
-            }
                 break;
 
-            case 'q' : {
+            case 'q' :
                 this->destroy_tree();
                 return;
-            }
 
-            case 'a' : {
+            case 'a' :
                 scanf("%d", &k);
                 this->insert(k, 0);
                 n = _root;
 
-            }
                 break;
-            case 'd' : {
+            case 'd' :
                 scanf("%d", &k);
                 this->remove(k);
                 n = _root;
-            }
+
                 break;
             default :
-                printf("Unknown cmd\n");
+                std::cout << "Unknown cmd\n" << std::endl;
         }
     }
 }
