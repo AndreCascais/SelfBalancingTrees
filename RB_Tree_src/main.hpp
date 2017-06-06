@@ -117,8 +117,8 @@ RBNode<K, V>::RBNode() {
     _leftChild = nullptr;
     _rightChild = nullptr;
     _father = nullptr;
-    _key = -111111;
-    _value = -111111;
+    _key = -9;
+    _value = -9;
     _color_type = Color::BLACK;
 }
 
@@ -414,7 +414,7 @@ void RBTree<K, V>::removeFixUp(RBNode<K, V>* node_X) {
         removeFixUp(father);
     }
 
-    // Case 3: Brother is BLACK with only one BLACK child
+        // Case 3: Brother is BLACK with only one BLACK child
     else {
 
         // NodeX is right Child and BLACK child of brother is on the left
@@ -427,7 +427,7 @@ void RBTree<K, V>::removeFixUp(RBNode<K, V>* node_X) {
 
         }
 
-        // NodeX is left Child and BLACK child of brother is on the right
+            // NodeX is left Child and BLACK child of brother is on the right
         else if (node_X->isLeftChild() && node_W->get_rightChild()->get_color() == Color::BLACK) {
 
             node_W->get_leftChild()->set_color(Color::BLACK);
@@ -444,10 +444,11 @@ void RBTree<K, V>::removeFixUp(RBNode<K, V>* node_X) {
         node_W->set_color(father->get_color());
         father->set_color(Color::BLACK);
 
-        if (node_X->isLeftChild()){
+        if (node_X->isLeftChild()) {
             node_W->get_rightChild()->set_color(Color::BLACK);
             rotate_left(father);
-        } else if( node_X->isRightChild() ){
+        }
+        else if (node_X->isRightChild()) {
             node_W->get_leftChild()->set_color(Color::BLACK);
             rotate_right(father);
         }
@@ -534,7 +535,7 @@ void RBTree<K, V>::insertFixUp(RBNode<K, V>* node_Z) {
         if (new_Z->isLeftChild()) {
             rotate_right(newZ_grandFather);
         }
-        else if (new_Z->isRightChild()){
+        else if (new_Z->isRightChild()) {
             rotate_left(newZ_grandFather);
         }
         else {
@@ -613,95 +614,107 @@ void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
 template<typename K, typename V>
 void RBTree<K, V>::iterate_tree(FILE* file) {
 
-    printf("l - left\n");
-    printf("r - right\n");
-    printf("f - father\n");
-    printf("root - root\n");
-    printf("quit - quit\n");
-    printf("add - quit\n");
-    printf("remove - quit\n");
-
-
-    char s[10];
-    if (file != nullptr) {
-        while (true) {
-            fscanf(file, "%s", s);
-            if (strcmp(s, "add") == 0) {
-                int k;
-                fscanf(file, "%d", &k);
-                this->insert(k, 0);
-            }
-            else if (strcmp(s, "remove") == 0) {
-                int k;
-                fscanf(file, "%d", &k);
-                this->remove(k);
-            }
-            else if (strcmp(s, "end") == 0) {
-                break;
-            }
+    int i, k, option = 1;
+    if (file != NULL) {
+        int n_inserts, n_removes, n_lookups;
+        fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
+        for (i = 0; i < n_inserts; i++) {
+            fscanf(file, "%d", &k);
+            insert(k, 0);
+        }
+        for (i = 0; i < n_removes; i++) {
+            fscanf(file, "%d", &k);
+            remove(k);
+        }
+        for (i = 0; i < n_lookups; i++) {
+            fscanf(file, "%d", &k);
+            find_with_key(k);
         }
     }
-    printf("Done reading from file\n");
+
+    if (option == 0) {
+        destroy_tree();
+        return;
+    }
+
+    char help_str[] = "Done reading from file\n"
+            "l - left\n"
+            "r - right\n"
+            "f - father\n"
+            "t - root\n"
+            "q - quit\n"
+            "a v  - adds value v to tree\n"
+            "d v - deletes value v from tree\n";
+
+    printf("%s", help_str);
+    char cmd;
+
     RBNode<K, V>* n = _root;
     while (true) {
 
         if (n != _nullLeaf) {
             n->print_node();
+
             bool result = verify();
-            if (!result){
+            if (!result) {
                 std::cout << "some property failed" << std::endl;
             }
         }
+        scanf("\n%c", &cmd);
+        switch (cmd) {
+            case 'l' : {
+                RBNode<K,V>* left = n->get_leftChild();
+                if (left == NULL) {
+                    printf("Not going to NULL Node\n");
+                }
+                else {
+                    n = left;
+                }
+                break;
+            }
 
-        scanf("%s", s);
+            case 'r' : {
+                RBNode<K,V>* right = n->get_rightChild();
+                if (right == NULL) {
+                    printf("Not going to NULL Node\n");
+                }
+                else {
+                    n = right;
+                }
+                break;
+            }
 
-        if (strcmp(s, "l") == 0) {
-            RBNode<K, V>* left = n->get_leftChild();
-            if (left == _nullLeaf) {
-                printf("Not going to NULL Node\n");
+
+            case 't' : {
+                if (n == _root) {
+                    printf("Already at root\n");
+                }
+                else {
+                    n = n->get_father();
+                }
             }
-            else {
-                n = left;
+                break;
+
+            case 'q' : {
+                this->destroy_tree();
+                return;
             }
-        }
-        else if (strcmp(s, "r") == 0) {
-            RBNode<K, V>* right = n->get_rightChild();
-            if (right == _nullLeaf) {
-                printf("Not going to NULL Node\n");
+
+            case 'a' : {
+                scanf("%d", &k);
+                this->insert(k,0);
+                n = _root;
+
             }
-            else {
-                n = right;
+                break;
+            case 'd' : {
+                scanf("%d", &k);
+                this->remove(k);
+                n = _root;
             }
-        }
-        else if (strcmp(s, "f") == 0) {
-            if (n == _root) {
-                printf("Already at root\n");
-            }
-            else {
-                n = n->get_father();
-            }
-        }
-        else if (strcmp(s, "root") == 0) {
-            n = _root;
-        }
-        else if (strcmp(s, "quit") == 0) {
-            this->destroy_tree();
-            return;
-        }
-        else if (strcmp(s, "add") == 0) {
-            int v;
-            scanf("%d", &v);
-            this->insert(v, 0);
-            n = _root;
-        }
-        else if (strcmp(s, "remove") == 0) {
-            int k;
-            scanf("%d", &k);
-            this->remove(k);
-            n = _root;
-        }
-        else {
-            printf("Unknown cmd\n");
+                break;
+            default :
+                printf("Unknown cmd\n");
         }
     }
 }
@@ -875,7 +888,7 @@ bool RBTree<K, V>::property4(RBNode<K, V>* n) {
 template<typename K, typename V>
 bool RBTree<K, V>::property5(RBNode<K, V>* n) {
 
-    if (n == _nullLeaf){
+    if (n == _nullLeaf) {
         return true;
     }
 
