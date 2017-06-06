@@ -624,25 +624,36 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         for (int i = 0; i < n_inserts; i++) {
             fscanf(file, "%d", &k);
             insert(k, 0);
-            bool result = verify();
-            if (!result) {
-                std::cout << "some property failed" << std::endl;
+
+            if (i % 1000 == 0) {
+                std::cout << i << std::endl;
+                bool result = verify();
+                if (!result) {
+                    std::cout << "some property failed" << std::endl;
+                }
             }
         }
         for (int i = 0; i < n_removes; i++) {
             fscanf(file, "%d", &k);
             remove(k);
-            bool result = verify();
-            if (!result) {
-                std::cout << "some property failed" << std::endl;
+
+            if (i % 1000 == 0) {
+                std::cout << i << std::endl;
+                bool result = verify();
+                if (!result) {
+                    std::cout << "some property failed" << std::endl;
+                }
             }
         }
         for (int i = 0; i < n_lookups; i++) {
             fscanf(file, "%d", &k);
             find_with_key(k);
-            bool result = verify();
-            if (!result) {
-                std::cout << "some property failed" << std::endl;
+            if (i % 1000 == 0) {
+                std::cout << i << std::endl;
+                bool result = verify();
+                if (!result) {
+                    std::cout << "some property failed" << std::endl;
+                }
             }
         }
     }
