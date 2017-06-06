@@ -4,6 +4,7 @@
 #include <map>
 #include <iostream>
 #include <algorithm>
+#include <chrono>
 
 // C Headers
 #include <cstring>
@@ -635,6 +636,11 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 //                }
 //            }
         }
+
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << "Time for inserts: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"<< std::endl;
+        begin = std::chrono::steady_clock::now();
+
         for (int i = 0; i < n_removes; i++) {
             fscanf(file, "%d", &k);
             remove(k);
@@ -647,6 +653,11 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 //                }
 //            }
         }
+
+        end = std::chrono::steady_clock::now();
+        std::cout << "Time for removals: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"<< std::endl;
+        begin = std::chrono::steady_clock::now();
+
         for (int i = 0; i < n_lookups; i++) {
             fscanf(file, "%d", &k);
             find_with_key(k);
@@ -658,8 +669,8 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 //                }
 //            }
         }
-        std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"<< std::endl;
+        end = std::chrono::steady_clock::now();
+        std::cout << "Time for lookups: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"<< std::endl;
     }
 
     if (option == 0) {
