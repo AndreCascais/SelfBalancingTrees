@@ -614,21 +614,33 @@ void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
 template<typename K, typename V>
 void RBTree<K, V>::iterate_tree(FILE* file) {
 
-    int i, k, option = 1;
+    int k, option = 1;
     if (file != NULL) {
         int n_inserts, n_removes, n_lookups;
         fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
-        for (i = 0; i < n_inserts; i++) {
+        for (int i = 0; i < n_inserts; i++) {
             fscanf(file, "%d", &k);
             insert(k, 0);
+            bool result = verify();
+            if (!result) {
+                std::cout << "some property failed" << std::endl;
+            }
         }
-        for (i = 0; i < n_removes; i++) {
+        for (int i = 0; i < n_removes; i++) {
             fscanf(file, "%d", &k);
             remove(k);
+            bool result = verify();
+            if (!result) {
+                std::cout << "some property failed" << std::endl;
+            }
         }
-        for (i = 0; i < n_lookups; i++) {
+        for (int i = 0; i < n_lookups; i++) {
             fscanf(file, "%d", &k);
             find_with_key(k);
+            bool result = verify();
+            if (!result) {
+                std::cout << "some property failed" << std::endl;
+            }
         }
     }
 
@@ -663,7 +675,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         scanf("\n%c", &cmd);
         switch (cmd) {
             case 'l' : {
-                RBNode<K,V>* left = n->get_leftChild();
+                RBNode<K, V>* left = n->get_leftChild();
                 if (left == NULL) {
                     printf("Not going to NULL Node\n");
                 }
@@ -674,7 +686,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
             }
 
             case 'r' : {
-                RBNode<K,V>* right = n->get_rightChild();
+                RBNode<K, V>* right = n->get_rightChild();
                 if (right == NULL) {
                     printf("Not going to NULL Node\n");
                 }
@@ -702,7 +714,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 
             case 'a' : {
                 scanf("%d", &k);
-                this->insert(k,0);
+                this->insert(k, 0);
                 n = _root;
 
             }
@@ -826,6 +838,7 @@ void RBTree<K, V>::transplant(RBNode<K, V>* node_U, RBNode<K, V>* node_V) {
 
 }
 
+
 template<typename K, typename V>
 bool RBTree<K, V>::verify() {
 
@@ -919,4 +932,3 @@ int RBTree<K, V>::black_height(RBNode<K, V>* n) {
     return height + std::max(black_height(n->get_leftChild()), black_height(n->get_rightChild()));
 
 };
-
