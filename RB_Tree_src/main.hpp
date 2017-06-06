@@ -647,7 +647,12 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 
         if (n != _nullLeaf) {
             n->print_node();
+            bool result = verify();
+            if (!result){
+                std::cout << "some property failed" << std::endl;
+            }
         }
+
         scanf("%s", s);
 
         if (strcmp(s, "l") == 0) {
@@ -869,6 +874,10 @@ bool RBTree<K, V>::property4(RBNode<K, V>* n) {
 
 template<typename K, typename V>
 bool RBTree<K, V>::property5(RBNode<K, V>* n) {
+
+    if (n == _nullLeaf){
+        return true;
+    }
 
     auto left_child = n->get_leftChild();
     auto right_child = n->get_rightChild();
