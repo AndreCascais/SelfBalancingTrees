@@ -398,13 +398,16 @@ void RBTree<K, V>::removeFixUp(RBNode<K, V>* node_X) {
 
         if (node_X->isLeftChild()) {
             rotate_left(father);
+            node_W = node_X->get_father()->get_rightChild();
         }
         else if (node_X->isRightChild()) {
             rotate_right(father);
+            node_W = node_X->get_father()->get_leftChild();
         }
         else {
             std::cout << "WTFFF" << std::endl;
         }
+
     }
 
     // Case 2: Brother is BLACK and has two BLACK children
