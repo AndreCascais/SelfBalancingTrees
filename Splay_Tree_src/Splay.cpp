@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string.h>
 #include <map>
+#include <tgmath.h>
+#include <chrono>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,6 +46,7 @@ public:
     void add_value(T);
 	void remove_value(T v);
 	Node<T>* lookup(T v);
+	double get_ratio();
 
 private:
     void destroy_tree(Node<T>*);
@@ -54,6 +57,8 @@ private:
     Node<T>* add_value(Node<T>*, T);
     void remove_root();
     void splay(Node<T>*);
+	int get_n_nodes(Node<T>*);
+	int	get_height(Node<T>*);
 	
     Node<T>* root;
 };
@@ -223,6 +228,21 @@ template <class T> void SplayTree<T>::rotate_right(Node<T>* node_x) {
 	node_y->set_right(node_x);
 }
 
+template <class T> double SplayTree<T>::get_ratio() {
+	int n_nodes = get_n_nodes(root);
+	int height = get_height(root);
+	return height/(log(n_nodes) / (log(2)));
+		
+}
+
+template <class T> int SplayTree<T>::get_n_nodes(Node<T>* node) {
+	return (node == NULL) ? 0 : 1 + get_n_nodes(node->get_left()) + get_n_nodes(node->get_right());
+}
+
+template <class T> int SplayTree<T>::get_height(Node<T>* node) {
+	return (node == NULL) ? 0 : 1 + max(get_height(node->get_left()), get_height(node->get_right()));
+}
+
 template <class T> Node<T>* SplayTree<T>::add_value(Node<T>* node, T v) { // Assumir valores diferentes a serem inseridos
     T value = node->get_value();
     if (v > value) {// Right
@@ -350,14 +370,28 @@ template <class T> void SplayTree<T>::splay(Node<T>* node) {
 
 template <class T> void SplayTree<T>::iterate_tree() {
 	
-    int i, v, option = 0;
+    int i, v, option = 1;
 	if (file != NULL) {
-		int option, n_inserts, n_removes, n_lookups;
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+		
+		int n_inserts, n_removes, n_lookups;
 		fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
+		/*double min_ratio = 100000;
+		double max_ratio = 0;
+		double avg_ratio = 0;*/
+		
 		for (i = 0; i < n_inserts; i++) {
 			fscanf(file, "%d", &v);
 			add_value(v);
+			/*if (i > 3) {
+				double ratio = get_ratio();
+				min_ratio = min(ratio, min_ratio);
+				max_ratio = max(ratio, max_ratio);
+				avg_ratio += ratio;
+			}*/
 		}
+		/*avg_ratio = avg_ratio/(n_inserts - 4);
+		printf("min ratio = %lf, max_ratio = %lf, avg_ratio = %lf\n", min_ratio, max_ratio, avg_ratio);*/
 		for (i = 0; i < n_removes; i++) {
 			fscanf(file, "%d", &v);
 			remove_value(v);
@@ -366,6 +400,8 @@ template <class T> void SplayTree<T>::iterate_tree() {
 			fscanf(file, "%d", &v);
 			lookup(v);
 		}
+		std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
+		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"<< std::endl;
 	}
 	
 	if (option == 0) {

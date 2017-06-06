@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string.h>
 #include <map>
+#include <tgmath.h>
+#include <chrono>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,6 +52,8 @@ public:
     void destroy_tree();
     void add_value(T);
     void remove_value(T);
+	Node<T>* lookup(T);
+	double get_ratio();
 
 private:
     void destroy_tree(Node<T>*);
@@ -60,6 +64,8 @@ private:
     Node<T>* add_value(Node<T>*, T);
     Node<T>* remove_node(Node<T>*);
     void traverse_backwards(Node<T>*);
+	int get_n_nodes(Node<T>*);
+	int	get_height(Node<T>*);
 	
     Node<T>* root;
 };
@@ -172,8 +178,7 @@ template <class T> Node<T>* Node<T>::get_min() {
 }
 
 template <class T> void Node<T>::print_node() {
-    //printf("I am at %d my height is %d height diff is %d\n", this->get_value(), this->get_height(),
-    //       this->get_height_diff());
+    
     cout << "I am at " << this->get_value() << " my height is " << this->get_height() <<
         " height diff is " << this->get_height_diff() << endl;
 }
@@ -186,7 +191,6 @@ template <class T> AVLTree<T>::~AVLTree() {
 }
 
 template <class T> void AVLTree<T>::add_value(T v) {
-    cout << "Adding " << v << endl;
     if (root == NULL) {
         root = new Node<T>(v);
     }
@@ -210,7 +214,7 @@ template <class T> void AVLTree<T>::destroy_tree(Node<T>* node) {
 }
 
 template <class T> void AVLTree<T>::remove_value(T v) {
-    cout << "Removing " << v << endl;
+
     Node<T>* found_node = find_value(root, v);
 	if (found_node != NULL) {
 		Node<T>* backtrack_node = remove_node(found_node);
@@ -285,6 +289,25 @@ template <class T> Node<T>* AVLTree<T>::add_value(Node<T>* node, T v) { // Assum
             return add_value(node_left, v);
         }
     }
+}
+
+template <class T> Node<T>* AVLTree<T>::lookup(T v) {
+	return find_value(root, v);
+}
+
+template <class T> double AVLTree<T>::get_ratio() {
+	int n_nodes = get_n_nodes(root);
+	int height = get_height(root);
+	return height/(log(n_nodes) / (log(2)));
+		
+}
+
+template <class T> int AVLTree<T>::get_n_nodes(Node<T>* node) {
+	return (node == NULL) ? 0 : 1 + get_n_nodes(node->get_left()) + get_n_nodes(node->get_right());
+}
+
+template <class T> int AVLTree<T>::get_height(Node<T>* node) {
+	return (node == NULL) ? 0 : 1 + max(get_height(node->get_left()), get_height(node->get_right()));
 }
 
 template <class T> Node<T>* AVLTree<T>::find_value(Node<T>* node, T v) {
@@ -364,13 +387,11 @@ template <class T> void AVLTree<T>::traverse_backwards(Node<T>* node) {
         int left_diff = node->get_left()->get_height_diff();
 
         if (left_diff <= 0) {// left -> left case1 @ example if both heights are now equal we keep going in the same direction (left)
-            printf("case1\n");
             new_root = node->get_left();
             this->rotate_right(node);
             
         } 
 		else { // left -> right case3 @ example
-			printf("case3\n");
             new_root = node->get_left()->get_right();
             this->rotate_left(node->get_left());
             this->rotate_right(node);
@@ -382,14 +403,14 @@ template <class T> void AVLTree<T>::traverse_backwards(Node<T>* node) {
         int right_diff = node->get_right()->get_height_diff();
         
         if (right_diff < 0) { // right->left case4
-            printf("case4\n");
+
             new_root  = node->get_right()->get_left();
             this->rotate_right(node->get_right());
             this->rotate_left(node);
             
         }
         else { // right->right case2
-            printf("case2\n");
+
             new_root = node->get_right();
             this->rotate_left(node);
         }
@@ -407,87 +428,120 @@ template <class T> void AVLTree<T>::traverse_backwards(Node<T>* node) {
 
 template <class T> void AVLTree<T>::iterate_tree() {
 	
-    printf("l - left\n");
-    printf("r - right\n");
-    printf("f - father\n");
-    printf("root - root\n");
-    printf("quit - quit\n");
-    printf("add - quit\n");
-    printf("remove - quit\n");
-	
-	char s[10];
+    int i, v, option = 1;
 	if (file != NULL) {
-		while (1) {
-			fscanf(file, "%s", s);
-			if (strcmp(s, "add") == 0) {
-				int v;
-				fscanf(file, "%d", &v);
-				this->add_value(v);
-			} 
-			else if (strcmp(s, "remove") == 0) {
-				int v;
-				fscanf(file, "%d", &v);
-				this->remove_value(v);
-			}
-			else if (strcmp(s, "end") == 0)
-				break;
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+		
+		int n_inserts, n_removes, n_lookups;
+		fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
+		/*double min_ratio = 100000;
+		double max_ratio = 0;
+		double avg_ratio = 0;*/
+		
+		for (i = 0; i < n_inserts; i++) {
+			fscanf(file, "%d", &v);
+			add_value(v);
+			/*if (i > 3) {
+				double ratio = get_ratio();
+				min_ratio = min(ratio, min_ratio);
+				max_ratio = max(ratio, max_ratio);
+				avg_ratio += ratio;
+				if (ratio < 1 || ratio >= 1.44)
+					printf("ratio = %lf at %d\n", ratio, i);
+			}*/
 		}
+		/*avg_ratio = avg_ratio/(n_inserts - 4);
+		printf("min ratio = %lf, max_ratio = %lf, avg_ratio = %lf\n", min_ratio, max_ratio, avg_ratio);*/
+		for (i = 0; i < n_removes; i++) {
+			fscanf(file, "%d", &v);
+			remove_value(v);
+		}
+		for (i = 0; i < n_lookups; i++) {
+			fscanf(file, "%d", &v);
+			lookup(v);
+		}
+		std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
+		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"<< std::endl;
 	}
-	printf("Done reading from file\n");
+	
+	if (option == 0) {
+		destroy_tree();
+		return;
+	}
+		
+	char help_str[] = "Done reading from file\n"
+		"l - left\n"
+		"r - right\n"
+	    "f - father\n"
+	    "t - root\n"
+	    "q - quit\n"
+	    "a v  - adds value v to tree\n"
+	    "d v - deletes value v from tree\n";
+	
+	printf("%s", help_str);
+	char cmd;
+	
 	Node<T>* n = root;
     while (1) {
 	
 		if (n != NULL) {
         	n->print_node();
         }
-        scanf("%s", s);
+        scanf("\n%c", &cmd);
+		switch(cmd) {
+			case 'l' : {
+            	Node<T>* left = n->get_left();
+            	if (left == NULL)
+                	printf("Not going to NULL Node\n");
+            	else
+                	n = left;
+				break;	
+			}
+		
+			case 'r' : {
+				Node<T>* right = n->get_right();
+				if (right == NULL) {
+					printf("Not going to NULL Node\n");
+				}
+				else {
+					n = right;
+				}
+				break;	
+			}
 
-        if (strcmp(s, "l") == 0) {
-            Node<T>* left = n->get_left();
-            if (left == NULL)
-                printf("Not going to NULL Node\n");
-            else
-                n = left;
-        } 
-        else if (strcmp(s, "r") == 0) {
-            Node<T>* right = n->get_right();
-            if (right == NULL) {
-                printf("Not going to NULL Node\n");
-            }
-            else {
-                n = right;
-            }
-        } 
-        else if (strcmp(s, "f") == 0) {
-            if (n == root) {
-                printf("Already at root\n");
-            }
-            else {
-                n = n->get_father();
-            }
-        } 
-        else if (strcmp(s, "root") == 0) {
-            n = root;
-        } 
-        else if (strcmp(s, "quit") == 0) {
-			this->destroy_tree();
-            return;
-        } 
-		else if (strcmp(s, "add") == 0) {
-			int v;
-			scanf("%d", &v);
-			this->add_value(v);
-			n = root;
-		} 
-		else if (strcmp(s, "remove") == 0) {
-			int v;
-			scanf("%d", &v);
-			this->remove_value(v);
-			n = root;
+        	
+			case 't' : {
+				if (n == root) {
+					printf("Already at root\n");
+				}
+				else {
+					n = n->get_father();
+				}
+			}
+			break;
+        
+			case 'q' : {
+				this->destroy_tree();
+            	return;
+			}
+    
+			case 'a' : {
+				scanf("%d", &v);
+				this->add_value(v);
+				n = root;
+
+				
+			}
+			break;
+			case 'd' : {
+				scanf("%d", &v);
+				this->remove_value(v);
+				n = root;
+			}
+			break;
+			default :
+            	printf("Unknown cmd\n");
 		}
-		else {
-            printf("Unknown cmd\n");
-        }
     }
 }
 
