@@ -117,8 +117,8 @@ RBNode<K, V>::RBNode() {
     _leftChild = nullptr;
     _rightChild = nullptr;
     _father = nullptr;
-//    _key = nullptr;
-//    _value = nullptr;
+    _key = -111111;
+    _value = -111111;
     _color_type = Color::BLACK;
 }
 
@@ -490,14 +490,15 @@ RBNode<K, V>* RBTree<K, V>::find_with_key(K key) {
 template<typename K, typename V>
 void RBTree<K, V>::insertFixUp(RBNode<K, V>* node_Z) {
 
-    RBNode<K, V>* nodeY = node_Z->get_uncle();
     RBNode<K, V>* father = node_Z->get_father();
-    RBNode<K, V>* grandFather = node_Z->get_grandFather();
 
     // We only need to fix the tree if the parent was also red
     if (father->get_color() != Color::RED) {
         return;
     }
+
+    RBNode<K, V>* nodeY = node_Z->get_uncle();
+    RBNode<K, V>* grandFather = node_Z->get_grandFather();
 
     // Case 1: Uncle is RED - recolor father and uncle and move z pointer to grandFather and start again.
     if (nodeY->get_color() == Color::RED) {
@@ -533,8 +534,11 @@ void RBTree<K, V>::insertFixUp(RBNode<K, V>* node_Z) {
         if (new_Z->isLeftChild()) {
             rotate_right(newZ_grandFather);
         }
-        else {
+        else if (new_Z->isRightChild()){
             rotate_left(newZ_grandFather);
+        }
+        else {
+            std::cout << "WTFFF" << std::endl;
         }
 
     }
@@ -553,6 +557,7 @@ void RBTree<K, V>::insert(K key, V value) {
     //tmp hack
     newNode->set_leftChild(_nullLeaf);
     newNode->set_rightChild(_nullLeaf);
+    newNode->set_father(_nullLeaf);
     //tmp hack
 
     if (_root == _nullLeaf) {
