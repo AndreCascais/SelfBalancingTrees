@@ -430,14 +430,13 @@ template <class T> void AVLTree<T>::iterate_tree() {
 	
     int i, v, option = 1;
 	if (file != NULL) {
-		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 		
 		int n_inserts, n_removes, n_lookups;
 		fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
 		/*double min_ratio = 100000;
 		double max_ratio = 0;
 		double avg_ratio = 0;*/
-		
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 		for (i = 0; i < n_inserts; i++) {
 			fscanf(file, "%d", &v);
 			add_value(v);
@@ -452,20 +451,26 @@ template <class T> void AVLTree<T>::iterate_tree() {
 		}
 		/*avg_ratio = avg_ratio/(n_inserts - 4);
 		printf("min ratio = %lf, max_ratio = %lf, avg_ratio = %lf\n", min_ratio, max_ratio, avg_ratio);*/
+		std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
+		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds for insertion"<< std::endl;
+		begin = std::chrono::steady_clock::now();
 		for (i = 0; i < n_removes; i++) {
 			fscanf(file, "%d", &v);
 			remove_value(v);
 		}
+		end= std::chrono::steady_clock::now();
+		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds for removal"<< std::endl;
+		begin = std::chrono::steady_clock::now();
 		for (i = 0; i < n_lookups; i++) {
 			fscanf(file, "%d", &v);
 			lookup(v);
 		}
-		std::chrono::steady_clock::time_point end= std::chrono::steady_clock::now();
-		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"<< std::endl;
+		end= std::chrono::steady_clock::now();
+		std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds for lookups"<< std::endl;
 	}
 	
 	if (option == 0) {
-		destroy_tree();
+		//destroy_tree();
 		return;
 	}
 		

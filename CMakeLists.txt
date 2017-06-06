@@ -25,3 +25,7 @@ add_executable(RBTree ${RBTREE_SRC} ${RBTREE_HDR})
 add_executable(AVLTree ${AVLTREE_SRC} ${AVLTREE_HDR})
 
 add_executable(SplayTree ${SplayTREE_SRC} ${SplayTREE_HDR})
+
+set(listfiles "${PROJECT_SOURCE_DIR}/List_src/List.cpp")
+
+add_executable(List ${listfiles})
