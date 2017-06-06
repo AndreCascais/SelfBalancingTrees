@@ -723,12 +723,13 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 template<typename K, typename V>
 void RBTree<K, V>::destroy_tree() {
     destroy_tree(_root);
+    delete _nullLeaf;
 }
 
 
 template<typename K, typename V>
 void RBTree<K, V>::destroy_tree(RBNode<K, V>* node) {
-    if (node != nullptr) {
+    if (node != _nullLeaf) {
         destroy_tree(node->get_leftChild());
         destroy_tree(node->get_rightChild());
         delete node;
