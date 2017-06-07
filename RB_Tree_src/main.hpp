@@ -10,6 +10,7 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
+#include <cmath>
 
 enum class Color {
     RED, BLACK
@@ -110,6 +111,8 @@ private:
 
     void destroy_tree(RBNode<K, V>* node);
     int black_height(RBNode<K, V>* n);
+    double get_ratio();
+    int get_height(RBNode<K, V>* pNode);
 };
 
 
@@ -622,6 +625,11 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
     if (file != NULL) {
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
+        double min_ratio = 100000;
+        double max_ratio = 0;
+        double avg_ratio = 0;
+
+
         int n_inserts, n_removes, n_lookups;
         fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
         for (int i = 0; i < n_inserts; i++) {
@@ -635,10 +643,22 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 //                    std::cout << "some property failed" << std::endl;
 //                }
 //            }
+
+            if (i > 3) {
+                double ratio = get_ratio();
+                min_ratio = std::min(ratio, min_ratio);
+                max_ratio = std::max(ratio, max_ratio);
+                avg_ratio += ratio;
+            }
         }
 
+        avg_ratio = avg_ratio/(n_inserts - 4);
+        printf("min ratio = %lf, max_ratio = %lf, avg_ratio = %lf\n", min_ratio, max_ratio, avg_ratio);
+
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << "Time for inserts: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"<< std::endl;
+        std::cout << "Time for inserts: "
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"
+                  << std::endl;
         begin = std::chrono::steady_clock::now();
 
         for (int i = 0; i < n_removes; i++) {
@@ -655,7 +675,9 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         }
 
         end = std::chrono::steady_clock::now();
-        std::cout << "Time for removals: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"<< std::endl;
+        std::cout << "Time for removals: "
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"
+                  << std::endl;
         begin = std::chrono::steady_clock::now();
 
         for (int i = 0; i < n_lookups; i++) {
@@ -670,7 +692,9 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 //            }
         }
         end = std::chrono::steady_clock::now();
-        std::cout << "Time for lookups: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"<< std::endl;
+        std::cout << "Time for lookups: "
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " milliseconds"
+                  << std::endl;
     }
 
     if (option == 0) {
@@ -957,3 +981,16 @@ int RBTree<K, V>::black_height(RBNode<K, V>* n) {
     return height + std::max(black_height(n->get_leftChild()), black_height(n->get_rightChild()));
 
 };
+
+template<typename K, typename V>
+double RBTree<K, V>::get_ratio() {
+    int n_nodes = _size;
+    int height = get_height(_root);
+    return height / (log(n_nodes) / (log(2)));
+
+}
+
+template<typename K, typename V>
+int RBTree<K, V>::get_height(RBNode<K, V>* n) {
+    return (n == _nullLeaf) ? 0 : 1 + std::max(get_height(n->get_leftChild()), get_height(n->get_rightChild()));
+}
