@@ -1,13 +1,12 @@
 #include "main.hpp"
 
-
 template<typename K, typename V>
 RBNode<K, V>::RBNode() {
     _leftChild = nullptr;
     _rightChild = nullptr;
     _father = nullptr;
-    _key = -9;
-    _value = -9;
+    _key = nullptr;
+    _value = nullptr;
     _color_type = Color::BLACK;
 }
 
@@ -506,7 +505,9 @@ void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
 template<typename K, typename V>
 void RBTree<K, V>::iterate_tree(FILE* file) {
 
-    int k, option = 1;
+    int option = 1;
+    int number;
+
     if (file != NULL) {
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
@@ -514,12 +515,14 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         double max_ratio = 0;
         double avg_ratio = 0;
 
-
         int n_inserts, n_removes, n_lookups;
         fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
         for (int i = 0; i < n_inserts; i++) {
-            fscanf(file, "%d", &k);
-            insert(k, 0);
+            fscanf(file, "%d", &number);
+            K k = (K) malloc(sizeof(K));
+            *k = number;
+            V v = (V) malloc(sizeof(V));
+            insert(k, v);
 
 //            if (i % 1000 == 0) {
 //                std::cout << i << std::endl;
@@ -547,7 +550,9 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         begin = std::chrono::steady_clock::now();
 
         for (int i = 0; i < n_removes; i++) {
-            fscanf(file, "%d", &k);
+            fscanf(file, "%d", &number);
+            K k = (K) malloc(sizeof(K));
+            *k = number;
             remove(k);
 
 //            if (i % 1000 == 0) {
@@ -566,7 +571,9 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         begin = std::chrono::steady_clock::now();
 
         for (int i = 0; i < n_lookups; i++) {
-            fscanf(file, "%d", &k);
+            fscanf(file, "%d", &number);
+            K k = (K) malloc(sizeof(K));
+            *k = number;
             find_with_key(k);
 //            if (i % 1000 == 0) {
 //                std::cout << i << std::endl;
@@ -642,19 +649,24 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
             }
                 break;
             case 'q' :
-                this->destroy_tree();
+                destroy_tree();
                 return;
 
             case 'a' : {
-                scanf("%d", &k);
-                this->insert(k, 0);
+                scanf("%d", &number);
+                K k = (K) malloc(sizeof(K));
+                *k = number;
+                V v = (V) malloc(sizeof(V));
+                insert(k, v);
                 n = _root;
 
             }
                 break;
             case 'd' : {
-                scanf("%d", &k);
-                this->remove(k);
+                scanf("%d", &number);
+                K k = (K) malloc(sizeof(K));
+                *k = number;
+                remove(k);
                 n = _root;
 
             }
@@ -867,6 +879,7 @@ int RBTree<K, V>::black_height(RBNode<K, V>* n) {
 
 };
 
+
 template<typename K, typename V>
 double RBTree<K, V>::get_ratio() {
     int n_nodes = _size;
@@ -874,6 +887,7 @@ double RBTree<K, V>::get_ratio() {
     return height / (log(n_nodes) / (log(2)));
 
 }
+
 
 template<typename K, typename V>
 int RBTree<K, V>::get_height(RBNode<K, V>* n) {

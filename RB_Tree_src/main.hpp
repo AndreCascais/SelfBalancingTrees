@@ -111,5 +111,3 @@ private:
     double get_ratio();
     int get_height(RBNode<K, V>* pNode);
 };
-
-
