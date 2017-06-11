@@ -29,3 +29,7 @@ add_executable(SplayTree ${SplayTREE_SRC} ${SplayTREE_HDR})
 set(listfiles "${PROJECT_SOURCE_DIR}/List_src/List.cpp")
 
 add_executable(List ${listfiles})
+
+enable_testing()
+add_test(1000I999R0L ../execs/RBTree ../Inputs/1000I999R0L.txt)
+add_test(10000I9999R0L ../execs/RBTree ../Inputs/10000I9999R0L.txt)

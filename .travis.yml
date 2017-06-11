@@ -7,7 +7,7 @@ script:
   - cd build
   - cmake ..
   - make
-#  - ctest -V
+  - ctest -V
 
 before_install:
     - eval "${MATRIX_EVAL}"
