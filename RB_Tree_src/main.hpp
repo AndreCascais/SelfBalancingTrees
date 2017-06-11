@@ -77,9 +77,6 @@ public:
     RBNode<K, V>* find_with_key(RBNode<K, V>* rootOfSubtree, K key);
     RBNode<K, V>* find_with_key(K key);
 
-    void set_leftChild_updateFather(RBNode<K, V>* father, RBNode<K, V>* child);
-    void set_rightChild_updateFather(RBNode<K, V>* father, RBNode<K, V>* child);
-
     void insert(K key, V value);
     void insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode);
     void insertFixUp(RBNode<K, V>* node_Z);
@@ -652,7 +649,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
             }
         }
 
-        avg_ratio = avg_ratio/(n_inserts - 4);
+        avg_ratio = avg_ratio / (n_inserts - 4);
         printf("min ratio = %lf, max_ratio = %lf, avg_ratio = %lf\n", min_ratio, max_ratio, avg_ratio);
 
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
