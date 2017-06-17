@@ -4,16 +4,16 @@ sudo: required
 
 script:
     - cd Inputs
-    - ./input_generator.sh 1000 999 0
-    - ./input_generator.sh 10000 9999 0
-    - ./input_generator.sh 100000 99999 0
-    - ./input_generator.sh 1000000 999999 0
-    - ./input_generator.sh 10000000 9999999 0
-    - ./input_generator.sh 1000 0 1000
-    - ./input_generator.sh 10000 0 10000
-    - ./input_generator.sh 100000 0 100000
-    - ./input_generator.sh 1000000 0 1000000
-    - ./input_generator.sh 10000000 0 10000000
+    - ./input_generator.sh 1000 999 0 0
+    - ./input_generator.sh 10000 9999 0 0
+    - ./input_generator.sh 100000 99999 0 0
+    - ./input_generator.sh 1000000 999999 0 0
+    - ./input_generator.sh 10000000 9999999 0 0
+    - ./input_generator.sh 1000 0 1000 0
+    - ./input_generator.sh 10000 0 10000 0
+    - ./input_generator.sh 100000 0 100000 0
+    - ./input_generator.sh 1000000 0 1000000 0
+    - ./input_generator.sh 10000000 0 10000000 0
     - cd ..
     - mkdir build
     - cd build
@@ -34,14 +34,14 @@ matrix:
         - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++"
       before_script:
         - brew update && brew cask uninstall oclint && brew install llvm@3.9 && brew link --overwrite llvm@3.9 --force
-        - brew install r
+        - brew tap homebrew/science && brew install r
     - os: osx
       osx_image: xcode8.3
       env:
         - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++"
       before_script:
         - brew update && brew cask uninstall oclint && brew install llvm && brew link --overwrite llvm --force
-        - brew install r
+        - brew tap homebrew/science && brew install r
 
     ######## OSX GCC ########
     - os: osx
@@ -50,28 +50,28 @@ matrix:
         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
       before_script:
         - brew update && brew cask uninstall oclint && brew install gcc@4.9
-        - brew install r
+        - brew tap homebrew/science && brew install r
     - os: osx
       osx_image: xcode8.3
       env:
         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
       before_script:
         - brew update && brew cask uninstall oclint && brew install gcc@5
-        - brew install r
+        - brew tap homebrew/science && brew install r
     - os: osx
       osx_image: xcode8.3
       env:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
       before_script:
         - brew update && brew cask uninstall oclint && brew install gcc@6
-        - brew install r
+        - brew tap homebrew/science && brew install r
     - os: osx
       osx_image: xcode8.3
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
       before_script:
         - brew update && brew cask uninstall oclint && brew install gcc
-        - brew install r
+        - brew tap homebrew/science && brew install r
 
     ######## LINUX CLANG ########
     - os: linux
