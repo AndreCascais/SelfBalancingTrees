@@ -511,9 +511,9 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
     if (file != NULL) {
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-        double min_ratio = 100000;
-        double max_ratio = 0;
-        double avg_ratio = 0;
+//        double min_ratio = 100000;
+//        double max_ratio = 0;
+//        double avg_ratio = 0;
 
         int n_inserts, n_removes, n_lookups;
         fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
@@ -532,16 +532,16 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 //                }
 //            }
 
-            if (i > 3) {
-                double ratio = get_ratio();
-                min_ratio = std::min(ratio, min_ratio);
-                max_ratio = std::max(ratio, max_ratio);
-                avg_ratio += ratio;
-            }
-        }
+//            if (i > 3) {
+//                double ratio = get_ratio();
+//                min_ratio = std::min(ratio, min_ratio);
+//                max_ratio = std::max(ratio, max_ratio);
+//                avg_ratio += ratio;
+//            }
+//        }
 
-        avg_ratio = avg_ratio / (n_inserts - 4);
-        printf("min ratio = %lf, max_ratio = %lf, avg_ratio = %lf\n", min_ratio, max_ratio, avg_ratio);
+//        avg_ratio = avg_ratio / (n_inserts - 4);
+//        printf("min ratio = %lf, max_ratio = %lf, avg_ratio = %lf\n", min_ratio, max_ratio, avg_ratio);
 
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         std::cout << "Time for inserts: "

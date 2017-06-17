@@ -17,7 +17,7 @@ script:
     - cd ..
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake -D CMAKE_BUILD_TYPE=Release ..
     - make
     - ctest -V
 
