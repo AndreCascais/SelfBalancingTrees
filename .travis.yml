@@ -3,14 +3,6 @@ dist: trusty
 sudo: required
 
 script:
-  - mkdir build
-  - cd build
-  - cmake ..
-  - make
-  - ctest -V
-
-before_install:
-    - eval "${MATRIX_EVAL}"
     - cd Inputs
     - ./input_generator.sh 1000 999 0
     - ./input_generator.sh 10000 9999 0
@@ -23,6 +15,14 @@ before_install:
     - ./input_generator.sh 1000000 0 1000000
     - ./input_generator.sh 10000000 0 10000000
     - cd ..
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make
+    - ctest -V
+
+before_install:
+    - eval "${MATRIX_EVAL}"
 
 matrix:
   include:
