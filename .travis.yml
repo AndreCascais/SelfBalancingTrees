@@ -11,6 +11,18 @@ script:
 
 before_install:
     - eval "${MATRIX_EVAL}"
+    - cd Inputs
+    - ./input_generator.sh 1000 999 0
+    - ./input_generator.sh 10000 9999 0
+    - ./input_generator.sh 100000 99999 0
+    - ./input_generator.sh 1000000 999999 0
+    - ./input_generator.sh 10000000 9999999 0
+    - ./input_generator.sh 1000 0 1000
+    - ./input_generator.sh 10000 0 10000
+    - ./input_generator.sh 100000 0 100000
+    - ./input_generator.sh 1000000 0 1000000
+    - ./input_generator.sh 10000000 0 10000000
+    - cd ..
 
 matrix:
   include:
