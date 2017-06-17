@@ -538,7 +538,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 //                max_ratio = std::max(ratio, max_ratio);
 //                avg_ratio += ratio;
 //            }
-//        }
+        }
 
 //        avg_ratio = avg_ratio / (n_inserts - 4);
 //        printf("min ratio = %lf, max_ratio = %lf, avg_ratio = %lf\n", min_ratio, max_ratio, avg_ratio);
