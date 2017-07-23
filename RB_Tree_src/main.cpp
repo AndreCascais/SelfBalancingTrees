@@ -161,26 +161,26 @@ RBTree<K, V>::~RBTree() = default;
 
 
 template<typename K, typename V>
-RBNode<K, V>* RBTree<K, V>::minimumFrom(RBNode<K, V>* node) {
+RBNode<K, V>* RBTree<K, V>::minimum_from(RBNode<K, V>* node) {
     auto leftChild = node->get_leftChild();
     if (leftChild != nullptr) {
         if (leftChild == _nullLeaf) {
             return node;
         }
-        return minimumFrom(leftChild);
+        return minimum_from(leftChild);
     }
     return nullptr;
 }
 
 
 template<typename K, typename V>
-RBNode<K, V>* RBTree<K, V>::maximumFrom(RBNode<K, V>* node) {
+RBNode<K, V>* RBTree<K, V>::maximum_from(RBNode<K, V>* node) {
     auto rightChild = node->get_rightChild();
     if (rightChild != nullptr) {
         if (rightChild == _nullLeaf) {
             return node;
         }
-        return maximumFrom(rightChild);
+        return maximum_from(rightChild);
     }
     return nullptr;
 }
@@ -192,7 +192,7 @@ RBNode<K, V>* RBTree<K, V>::get_successorOf(RBNode<K, V>* node) {
     auto rightChild = node->get_rightChild();
     if (rightChild != nullptr) {
         if (rightChild != _nullLeaf) {
-            return minimumFrom(rightChild);
+            return minimum_from(rightChild);
         }
     }
 

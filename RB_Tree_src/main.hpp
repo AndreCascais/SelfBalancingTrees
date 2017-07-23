@@ -71,8 +71,8 @@ public:
 
     // Auxiliary Stuff
     RBNode<K, V>* get_successorOf(RBNode<K, V>* node);
-    RBNode<K, V>* minimumFrom(RBNode<K, V>* node);
-    RBNode<K, V>* maximumFrom(RBNode<K, V>* node);
+    RBNode<K, V>* minimum_from(RBNode<K, V>* node);
+    RBNode<K, V>* maximum_from(RBNode<K, V>* node);
 
     RBNode<K, V>* find_with_key(RBNode<K, V>* rootOfSubtree, K key);
     RBNode<K, V>* find_with_key(K key);
