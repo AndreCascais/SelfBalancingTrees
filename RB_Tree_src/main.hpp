@@ -39,7 +39,6 @@ public:
     void set_father(RBNode* n);
     void set_color(Color c);
 
-
     // Auxiliary Stuff
     void print_node();
     char color_to_char();
@@ -101,9 +100,7 @@ public:
 
 private:
     RBNode<K, V>* _nullLeaf;
-
     RBNode<K, V>* _root;
-
     int _size;
 
     void destroy_tree(RBNode<K, V>* node);
