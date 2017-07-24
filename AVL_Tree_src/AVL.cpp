@@ -11,7 +11,7 @@ using namespace std;
 
 //@todo overload operador == entre nodes ?
 
-FILE* file = NULL;
+FILE* file = nullptr;
 
 
 template<class T>
@@ -76,9 +76,9 @@ template<class T>
 Node<T>::Node(T v) {
     value = v;
     height = 0;
-    left = NULL;
-    right = NULL;
-    father = NULL;
+    left = nullptr;
+    right = nullptr;
+    father = nullptr;
 }
 
 template<class T>
@@ -99,8 +99,8 @@ template<class T>
 void Node<T>::update_height() {
     Node<T>* left = this->get_left();
     Node<T>* right = this->get_right();
-    int height_left = (left == NULL ? -1 : left->get_height());
-    int height_right = (right == NULL ? -1 : right->get_height());
+    int height_left = (left == nullptr ? -1 : left->get_height());
+    int height_right = (right == nullptr ? -1 : right->get_height());
     height = 1 + max(height_left, height_right);
 }
 
@@ -108,15 +108,15 @@ template<class T>
 int Node<T>::get_height_diff() {
     Node<T>* left = this->get_left();
     Node<T>* right = this->get_right();
-    int left_height = (left == NULL ? -1 : left->get_height());
-    int right_height = (right == NULL ? -1 : right->get_height());
+    int left_height = (left == nullptr ? -1 : left->get_height());
+    int right_height = (right == nullptr ? -1 : right->get_height());
 
     return right_height - left_height;
 }
 
 template<class T>
 void Node<T>::set_left(Node<T>* n) {
-    if (n != NULL) {
+    if (n != nullptr) {
         n->set_father(this);
     }
     left = n;
@@ -129,7 +129,7 @@ Node<T>* Node<T>::get_left() {
 
 template<class T>
 void Node<T>::set_right(Node<T>* n) {
-    if (n != NULL) {
+    if (n != nullptr) {
         n->set_father(this);
     }
     right = n;
@@ -152,7 +152,7 @@ Node<T>* Node<T>::get_father() {
 
 template<class T>
 void Node<T>::set_son(Node<T>* n) {
-    if (n != NULL) { // Have to also update either left or right
+    if (n != nullptr) { // Have to also update either left or right
         T val = n->get_value();
         if (val > this->value) { //right
             this->set_right(n);
@@ -162,25 +162,25 @@ void Node<T>::set_son(Node<T>* n) {
         }
     }
     else { // only gets here when we want to set right to null
-        this->set_right(NULL); //@todo hack much ?
+        this->set_right(nullptr); //@todo hack much ?
     }
 }
 
 template<class T>
 void Node<T>::delete_son(Node<T>* n) { // deletes link only
     Node<T>* left_node = n->get_left();
-    if (left_node != NULL && left_node->get_value() == n->get_value()) {
-        this->set_left(NULL);
+    if (left_node != nullptr && left_node->get_value() == n->get_value()) {
+        this->set_left(nullptr);
     }
     else {
-        this->set_right(NULL);
+        this->set_right(nullptr);
     }
 }
 
 template<class T>
 Node<T>* Node<T>::get_max() {
     Node<T>* right = this->get_right();
-    if (right == NULL) {
+    if (right == nullptr) {
         return this;
     }
     else {
@@ -217,7 +217,7 @@ AVLTree<T>::~AVLTree() {
 
 template<class T>
 void AVLTree<T>::add_value(T v) {
-    if (root == NULL) {
+    if (root == nullptr) {
         root = new Node<T>(v);
     }
     else {
@@ -234,7 +234,7 @@ void AVLTree<T>::destroy_tree() {
 
 template<class T>
 void AVLTree<T>::destroy_tree(Node<T>* node) {
-    if (node != NULL) {
+    if (node != nullptr) {
         destroy_tree(node->get_left());
         destroy_tree(node->get_right());
         delete node;
@@ -245,9 +245,9 @@ template<class T>
 void AVLTree<T>::remove_value(T v) {
 
     Node<T>* found_node = find_value(root, v);
-    if (found_node != NULL) {
+    if (found_node != nullptr) {
         Node<T>* backtrack_node = remove_node(found_node);
-        if (backtrack_node != NULL) {
+        if (backtrack_node != nullptr) {
             traverse_backwards(backtrack_node);
         }
     }
@@ -263,7 +263,7 @@ void AVLTree<T>::rotate_left(Node<T>* node_x) {
 
     node_y->set_father(node_x->get_father());
 
-    if (node_y->get_father() == NULL) {
+    if (node_y->get_father() == nullptr) {
         root = node_y;
     }
     else {
@@ -285,7 +285,7 @@ void AVLTree<T>::rotate_right(Node<T>* node_x) {
 
     node_y->set_father(node_x->get_father());
 
-    if (node_y->get_father() == NULL) {
+    if (node_y->get_father() == nullptr) {
         root = node_y;
     }
     else {
@@ -301,7 +301,7 @@ Node<T>* AVLTree<T>::add_value(Node<T>* node, T v) { // Assumir valores diferent
     T value = node->get_value();
     if (v > value) {// Right
         Node<T>* node_right = node->get_right();
-        if (node_right == NULL) {
+        if (node_right == nullptr) {
             Node<T>* new_node = new Node<T>(v);
             node->set_right(new_node);
             return new_node;
@@ -354,8 +354,8 @@ Node<T>* AVLTree<T>::find_value(Node<T>* node, T v) {
     }
     else {
         Node<T>* new_node = (v > value) ? node->get_right() : node->get_left();
-        if (new_node == NULL) {
-            return NULL;
+        if (new_node == nullptr) {
+            return nullptr;
         }
         else {
             return find_value(new_node, v);
@@ -370,23 +370,23 @@ Node<T>* AVLTree<T>::remove_node(Node<T>* node) {
     Node<T>* left_node = node->get_left();
     Node<T>* right_node = node->get_right();
     if (node->get_height() == 0) { // leaf
-        if (father == NULL) { // root
-            root = NULL;
+        if (father == nullptr) { // root
+            root = nullptr;
         }
         else { // have to remove link from father
             father->delete_son(node);
         }
     }
-    else if (right_node == NULL) { // only have left son
-        if (father == NULL) {
+    else if (right_node == nullptr) { // only have left son
+        if (father == nullptr) {
             root = left_node;
         }
         else {
             father->set_son(left_node);
         }
     }
-    else if (left_node == NULL) { // only have right son
-        if (father == NULL) {
+    else if (left_node == nullptr) { // only have right son
+        if (father == nullptr) {
             root = right_node;
         }
         else {
@@ -400,11 +400,11 @@ Node<T>* AVLTree<T>::remove_node(Node<T>* node) {
             backtrack_node = new_root;
         }
         new_root->get_father()->set_son(new_root->get_left());
-        if (father != NULL) {
+        if (father != nullptr) {
             father->set_son(new_root);
         }
         else {
-            new_root->set_father(NULL);
+            new_root->set_father(nullptr);
             root = new_root;
         }
         if (left_node->get_value() != new_root->get_value()) {
@@ -467,7 +467,7 @@ void AVLTree<T>::traverse_backwards(Node<T>* node) {
 
     Node<T>* father = new_root->get_father();
 
-    if (father == NULL) {
+    if (father == nullptr) {
         root = new_root;
         return;
     }
@@ -479,7 +479,7 @@ template<class T>
 void AVLTree<T>::iterate_tree() {
 
     int i, v, option = 1;
-    if (file != NULL) {
+    if (file != nullptr) {
 
         int n_inserts, n_removes, n_lookups;
         fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
@@ -542,14 +542,14 @@ void AVLTree<T>::iterate_tree() {
     Node<T>* n = root;
     while (1) {
 
-        if (n != NULL) {
+        if (n != nullptr) {
             n->print_node();
         }
         scanf("\n%c", &cmd);
         switch (cmd) {
             case 'l' : {
                 Node<T>* left = n->get_left();
-                if (left == NULL) {
+                if (left == nullptr) {
                     printf("Not going to NULL Node\n");
                 }
                 else {
@@ -560,7 +560,7 @@ void AVLTree<T>::iterate_tree() {
 
             case 'r' : {
                 Node<T>* right = n->get_right();
-                if (right == NULL) {
+                if (right == nullptr) {
                     printf("Not going to NULL Node\n");
                 }
                 else {
