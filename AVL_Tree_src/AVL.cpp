@@ -271,7 +271,7 @@ int AVLTree<T>::get_n_nodes(AVLNode<T>* node) {
 
 template<class T>
 int AVLTree<T>::get_height(AVLNode<T>* node) {
-    return (node == NULL) ? 0 : 1 + max(get_height(node->get_left()), get_height(node->get_right()));
+    return (node == NULL) ? 0 : 1 + std::max(get_height(node->get_left()), get_height(node->get_right()));
 }
 
 template<class T>
