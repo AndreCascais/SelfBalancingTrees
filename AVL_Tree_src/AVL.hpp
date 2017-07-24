@@ -14,7 +14,7 @@
 template<class T>
 class AVLNode {
 public:
-    AVLNode(T v);
+    explicit AVLNode(T v);
     ~AVLNode();
 
     int get_height();
@@ -56,7 +56,6 @@ public:
 
 private:
     void destroy_tree(AVLNode<T>* node);
-    void delete_node(AVLNode<T>*);
     AVLNode<T>* find_value(AVLNode<T>* node, T v);
     void rotate_right(AVLNode<T>* node_x);
     void rotate_left(AVLNode<T>* node_x);

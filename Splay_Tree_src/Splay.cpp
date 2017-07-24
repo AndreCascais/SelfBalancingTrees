@@ -9,8 +9,7 @@ SplayNode<T>::SplayNode(T v) {
 }
 
 template<class T>
-SplayNode<T>::~SplayNode() {
-}
+SplayNode<T>::~SplayNode() = default;
 
 template<class T>
 T SplayNode<T>::get_value() {
@@ -114,8 +113,7 @@ SplayTree<T>::SplayTree() {
 }
 
 template<class T>
-SplayTree<T>::~SplayTree() {
-}
+SplayTree<T>::~SplayTree() = default;
 
 template<class T>
 void SplayTree<T>::add_value(T v) {
@@ -342,7 +340,7 @@ void SplayTree<T>::splay(SplayNode<T>* node) {
 template<class T>
 void SplayTree<T>::iterate_tree(FILE* file) {
 
-    int i, v, option = 1;
+    int v, option = 1;
     if (file != nullptr) {
 
         int n_inserts, n_removes, n_lookups;
@@ -351,7 +349,7 @@ void SplayTree<T>::iterate_tree(FILE* file) {
         double max_ratio = 0;
         double avg_ratio = 0;*/
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-        for (i = 0; i < n_inserts; i++) {
+        for (int i = 0; i < n_inserts; i++) {
             fscanf(file, "%d", &v);
             add_value(v);
             /*if (i > 3) {
@@ -367,7 +365,7 @@ void SplayTree<T>::iterate_tree(FILE* file) {
         std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                   << " milliseconds for insertion" << std::endl;
         begin = std::chrono::steady_clock::now();
-        for (i = 0; i < n_removes; i++) {
+        for (int i = 0; i < n_removes; i++) {
             fscanf(file, "%d", &v);
             remove_value(v);
         }
@@ -375,7 +373,7 @@ void SplayTree<T>::iterate_tree(FILE* file) {
         std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                   << " milliseconds for removal" << std::endl;
         begin = std::chrono::steady_clock::now();
-        for (i = 0; i < n_lookups; i++) {
+        for (int i = 0; i < n_lookups; i++) {
             fscanf(file, "%d", &v);
             lookup(v);
         }

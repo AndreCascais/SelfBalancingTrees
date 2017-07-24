@@ -1,18 +1,20 @@
 #pragma once
 
+// C++ Headers
 #include <iostream>
-#include <string.h>
 #include <map>
-#include <tgmath.h>
 #include <chrono>
 
-#include <stdio.h>
-#include <stdlib.h>
+// C Headers
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctgmath>
 
 template<class T>
 class SplayNode {
 public:
-    SplayNode(T value);
+    explicit SplayNode(T value);
     ~SplayNode();
 
     T get_value();
@@ -50,7 +52,6 @@ public:
 
 private:
     void destroy_tree(SplayNode<T>*);
-    void delete_node(SplayNode<T>*);
     SplayNode<T>* find_value(SplayNode<T>*, T);
     void rotate_right(SplayNode<T>*);
     void rotate_left(SplayNode<T>*);
