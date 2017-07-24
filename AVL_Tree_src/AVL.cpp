@@ -208,7 +208,7 @@ void Node<T>::print_node() {
 
 template<class T>
 AVLTree<T>::AVLTree() {
-    root = NULL;
+    root = nullptr;
 }
 
 template<class T>
@@ -312,7 +312,7 @@ Node<T>* AVLTree<T>::add_value(Node<T>* node, T v) { // Assumir valores diferent
     }
     else { // Left
         Node<T>* node_left = node->get_left();
-        if (node_left == NULL) {
+        if (node_left == nullptr) {
             Node<T>* new_node = new Node<T>(v);
             node->set_left(new_node);
             return new_node;
