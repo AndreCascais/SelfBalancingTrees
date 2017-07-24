@@ -1,4 +1,4 @@
-#include "main.hpp"
+#include "RB.hpp"
 
 template<typename K, typename V>
 RBNode<K, V>::RBNode() {

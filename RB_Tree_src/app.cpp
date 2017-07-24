@@ -1,4 +1,4 @@
-#include "main.cpp"
+#include "RB.cpp"
 
 int main(int argc, char** argv) {
 
