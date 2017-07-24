@@ -1,7 +1,5 @@
 #include "Splay.hpp"
 
-using namespace std;
-
 template<class T>
 SplayNode<T>::SplayNode(T v) {
     value = v;
@@ -107,7 +105,7 @@ SplayNode<T>* SplayNode<T>::get_min() {
 template<class T>
 void SplayNode<T>::print_node() {
 
-    cout << "I am at " << this->get_value() << endl;
+    std::cout << "I am at " << this->get_value() << std::endl;
 }
 
 template<class T>
@@ -208,7 +206,7 @@ int SplayTree<T>::get_n_nodes(SplayNode<T>* node) {
 
 template<class T>
 int SplayTree<T>::get_height(SplayNode<T>* node) {
-    return (node == NULL) ? 0 : 1 + max(get_height(node->get_left()), get_height(node->get_right()));
+    return (node == NULL) ? 0 : 1 + std::max(get_height(node->get_left()), get_height(node->get_right()));
 }
 
 template<class T>
