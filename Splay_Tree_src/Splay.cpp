@@ -1,69 +1,6 @@
-#include <iostream>
-#include <string.h>
-#include <map>
-#include <tgmath.h>
-#include <chrono>
-
-#include <stdio.h>
-#include <stdlib.h>
+#include "Splay.hpp"
 
 using namespace std;
-
-FILE* file = NULL;
-
-template<class T>
-class Node {
-public:
-    Node(T value);
-    ~Node();
-
-    T get_value();
-    void set_left(Node<T>*);
-    Node<T>* get_left();
-    void set_right(Node<T>*);
-    Node<T>* get_right();
-    void set_father(Node<T>*);
-    Node<T>* get_father();
-    void set_son(Node<T>*);
-    void delete_son(Node<T>*);
-
-    Node<T>* get_min();
-    Node<T>* get_max();
-    void print_node();
-
-private:
-    T value;
-    Node<T>* left;
-    Node<T>* right;
-    Node<T>* father;
-};
-
-template<class T>
-class SplayTree {
-public:
-    SplayTree();
-    ~SplayTree();
-    void iterate_tree();
-    void destroy_tree();
-    void add_value(T);
-    void remove_value(T v);
-    Node<T>* lookup(T v);
-    double get_ratio();
-
-private:
-    void destroy_tree(Node<T>*);
-    void delete_node(Node<T>*);
-    Node<T>* find_value(Node<T>*, T);
-    void rotate_right(Node<T>*);
-    void rotate_left(Node<T>*);
-    Node<T>* add_value(Node<T>*, T);
-    void remove_root();
-    void splay(Node<T>*);
-    int get_n_nodes(Node<T>*);
-    int get_height(Node<T>*);
-
-    Node<T>* root;
-};
 
 template<class T>
 Node<T>::Node(T v) {
@@ -405,7 +342,7 @@ void SplayTree<T>::splay(Node<T>* node) {
 }
 
 template<class T>
-void SplayTree<T>::iterate_tree() {
+void SplayTree<T>::iterate_tree(FILE* file) {
 
     int i, v, option = 1;
     if (file != NULL) {
@@ -529,17 +466,4 @@ void SplayTree<T>::iterate_tree() {
                 printf("Unknown cmd\n");
         }
     }
-}
-
-int main(int argc, char** argv) {
-
-    if (argc > 1) {
-        file = fopen(argv[1], "r");
-    }
-
-    SplayTree<int>* t = new SplayTree<int>();
-    t->iterate_tree();
-    delete t;
-
-    return 0;
 }
