@@ -2,9 +2,6 @@
 
 //@todo overload operador == entre nodes ?
 
-FILE* file = nullptr;
-
-
 template<class T>
 Node<T>::Node(T v) {
     value = v;
@@ -407,7 +404,7 @@ void AVLTree<T>::traverse_backwards(Node<T>* node) {
 }
 
 template<class T>
-void AVLTree<T>::iterate_tree() {
+void AVLTree<T>::iterate_tree(FILE* file) {
 
     int v, option = 1;
     if (file != nullptr) {
@@ -535,18 +532,3 @@ void AVLTree<T>::iterate_tree() {
         }
     }
 }
-
-int main(int argc, char** argv) {
-
-    if (argc > 1) {
-        file = fopen(argv[1], "r");
-    }
-
-    AVLTree<int>* t = new AVLTree<int>();
-    t->iterate_tree();
-    delete t;
-
-    return 0;
-}
-
-		

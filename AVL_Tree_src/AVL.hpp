@@ -47,7 +47,7 @@ class AVLTree {
 public:
     AVLTree();
     ~AVLTree();
-    void iterate_tree();
+    void iterate_tree(FILE* file);
     void destroy_tree();
     void add_value(T v);
     void remove_value(T v);
@@ -68,4 +68,3 @@ private:
 
     Node<T>* root;
 };
-
