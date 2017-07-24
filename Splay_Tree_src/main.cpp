@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv) {
 
-    FILE* file = NULL;
+    FILE* file = nullptr;
 
     if (argc > 1) {
         file = fopen(argv[1], "r");

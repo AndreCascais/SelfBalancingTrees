@@ -468,7 +468,7 @@ void AVLTree<T>::iterate_tree(FILE* file) {
     char cmd;
 
     AVLNode<T>* n = root;
-    while (1) {
+    while (true) {
 
         if (n != nullptr) {
             n->print_node();

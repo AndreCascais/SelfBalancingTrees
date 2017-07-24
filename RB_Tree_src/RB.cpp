@@ -508,7 +508,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
     int option = 1;
     int number;
 
-    if (file != NULL) {
+    if (file != nullptr) {
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 //        double min_ratio = 100000;

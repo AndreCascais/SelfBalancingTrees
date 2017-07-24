@@ -83,7 +83,7 @@ void SplayNode<T>::delete_son(SplayNode<T>* n) { // deletes link only
 template<class T>
 SplayNode<T>* SplayNode<T>::get_max() {
     SplayNode<T>* right = this->get_right();
-    if (right == NULL) {
+    if (right == nullptr) {
         return this;
     }
     else {
@@ -94,7 +94,7 @@ SplayNode<T>* SplayNode<T>::get_max() {
 template<class T>
 SplayNode<T>* SplayNode<T>::get_min() {
     SplayNode<T>* left = this->get_left();
-    if (left == NULL) {
+    if (left == nullptr) {
         return this;
     }
     else {
@@ -331,7 +331,7 @@ void SplayTree<T>::splay(SplayNode<T>* node) {
             }
         }
     }
-    if (node->get_father() == NULL) {
+    if (node->get_father() == nullptr) {
         root = node;
         return;
     }
@@ -343,7 +343,7 @@ template<class T>
 void SplayTree<T>::iterate_tree(FILE* file) {
 
     int i, v, option = 1;
-    if (file != NULL) {
+    if (file != nullptr) {
 
         int n_inserts, n_removes, n_lookups;
         fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
@@ -402,7 +402,7 @@ void SplayTree<T>::iterate_tree(FILE* file) {
     char cmd;
 
     SplayNode<T>* n = root;
-    while (1) {
+    while (true) {
 
         if (n != NULL) {
             n->print_node();
