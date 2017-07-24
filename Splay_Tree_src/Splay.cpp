@@ -3,7 +3,7 @@
 using namespace std;
 
 template<class T>
-Node<T>::Node(T v) {
+SplayNode<T>::SplayNode(T v) {
     value = v;
     left = NULL;
     right = NULL;
@@ -11,16 +11,16 @@ Node<T>::Node(T v) {
 }
 
 template<class T>
-Node<T>::~Node() {
+SplayNode<T>::~SplayNode() {
 }
 
 template<class T>
-T Node<T>::get_value() {
+T SplayNode<T>::get_value() {
     return value;
 }
 
 template<class T>
-void Node<T>::set_left(Node<T>* n) {
+void SplayNode<T>::set_left(SplayNode<T>* n) {
     if (n != NULL) {
         n->set_father(this);
     }
@@ -28,12 +28,12 @@ void Node<T>::set_left(Node<T>* n) {
 }
 
 template<class T>
-Node<T>* Node<T>::get_left() {
+SplayNode<T>* SplayNode<T>::get_left() {
     return left;
 }
 
 template<class T>
-void Node<T>::set_right(Node<T>* n) {
+void SplayNode<T>::set_right(SplayNode<T>* n) {
     if (n != NULL) {
         n->set_father(this);
     }
@@ -41,22 +41,22 @@ void Node<T>::set_right(Node<T>* n) {
 }
 
 template<class T>
-Node<T>* Node<T>::get_right() {
+SplayNode<T>* SplayNode<T>::get_right() {
     return right;
 }
 
 template<class T>
-void Node<T>::set_father(Node<T>* n) {
+void SplayNode<T>::set_father(SplayNode<T>* n) {
     father = n;
 }
 
 template<class T>
-Node<T>* Node<T>::get_father() {
+SplayNode<T>* SplayNode<T>::get_father() {
     return father;
 }
 
 template<class T>
-void Node<T>::set_son(Node<T>* n) {
+void SplayNode<T>::set_son(SplayNode<T>* n) {
     if (n != NULL) { // Have to also update either left or right
         T val = n->get_value();
         if (val > this->value) { //right
@@ -72,8 +72,8 @@ void Node<T>::set_son(Node<T>* n) {
 }
 
 template<class T>
-void Node<T>::delete_son(Node<T>* n) { // deletes link only
-    Node<T>* left_node = n->get_left();
+void SplayNode<T>::delete_son(SplayNode<T>* n) { // deletes link only
+    SplayNode<T>* left_node = n->get_left();
     if (left_node != NULL && left_node->get_value() == n->get_value()) {
         this->set_left(NULL);
     }
@@ -83,8 +83,8 @@ void Node<T>::delete_son(Node<T>* n) { // deletes link only
 }
 
 template<class T>
-Node<T>* Node<T>::get_max() {
-    Node<T>* right = this->get_right();
+SplayNode<T>* SplayNode<T>::get_max() {
+    SplayNode<T>* right = this->get_right();
     if (right == NULL) {
         return this;
     }
@@ -94,8 +94,8 @@ Node<T>* Node<T>::get_max() {
 }
 
 template<class T>
-Node<T>* Node<T>::get_min() {
-    Node<T>* left = this->get_left();
+SplayNode<T>* SplayNode<T>::get_min() {
+    SplayNode<T>* left = this->get_left();
     if (left == NULL) {
         return this;
     }
@@ -105,7 +105,7 @@ Node<T>* Node<T>::get_min() {
 }
 
 template<class T>
-void Node<T>::print_node() {
+void SplayNode<T>::print_node() {
 
     cout << "I am at " << this->get_value() << endl;
 }
@@ -122,10 +122,10 @@ SplayTree<T>::~SplayTree() {
 template<class T>
 void SplayTree<T>::add_value(T v) {
     if (root == NULL) {
-        root = new Node<T>(v);
+        root = new SplayNode<T>(v);
     }
     else {
-        Node<T>* new_node = add_value(root, v);
+        SplayNode<T>* new_node = add_value(root, v);
         splay(new_node);
     }
 
@@ -137,7 +137,7 @@ void SplayTree<T>::destroy_tree() {
 }
 
 template<class T>
-void SplayTree<T>::destroy_tree(Node<T>* node) {
+void SplayTree<T>::destroy_tree(SplayNode<T>* node) {
     if (node != NULL) {
         destroy_tree(node->get_left());
         destroy_tree(node->get_right());
@@ -147,7 +147,7 @@ void SplayTree<T>::destroy_tree(Node<T>* node) {
 
 template<class T>
 void SplayTree<T>::remove_value(T v) {
-    Node<T>* found_node = find_value(root, v);
+    SplayNode<T>* found_node = find_value(root, v);
     if (found_node != NULL) {
         splay(found_node);
         remove_root();
@@ -155,9 +155,9 @@ void SplayTree<T>::remove_value(T v) {
 }
 
 template<class T>
-void SplayTree<T>::rotate_left(Node<T>* node_x) {
+void SplayTree<T>::rotate_left(SplayNode<T>* node_x) {
 
-    Node<T>* node_y;
+    SplayNode<T>* node_y;
 
     node_y = node_x->get_right();
     node_x->set_right(node_y->get_left());
@@ -175,9 +175,9 @@ void SplayTree<T>::rotate_left(Node<T>* node_x) {
 }
 
 template<class T>
-void SplayTree<T>::rotate_right(Node<T>* node_x) {
+void SplayTree<T>::rotate_right(SplayNode<T>* node_x) {
 
-    Node<T>* node_y;
+    SplayNode<T>* node_y;
 
     node_y = node_x->get_left();
     node_x->set_left(node_y->get_right());
@@ -202,22 +202,22 @@ double SplayTree<T>::get_ratio() {
 }
 
 template<class T>
-int SplayTree<T>::get_n_nodes(Node<T>* node) {
+int SplayTree<T>::get_n_nodes(SplayNode<T>* node) {
     return (node == NULL) ? 0 : 1 + get_n_nodes(node->get_left()) + get_n_nodes(node->get_right());
 }
 
 template<class T>
-int SplayTree<T>::get_height(Node<T>* node) {
+int SplayTree<T>::get_height(SplayNode<T>* node) {
     return (node == NULL) ? 0 : 1 + max(get_height(node->get_left()), get_height(node->get_right()));
 }
 
 template<class T>
-Node<T>* SplayTree<T>::add_value(Node<T>* node, T v) { // Assumir valores diferentes a serem inseridos
+SplayNode<T>* SplayTree<T>::add_value(SplayNode<T>* node, T v) { // Assumir valores diferentes a serem inseridos
     T value = node->get_value();
     if (v > value) {// Right
-        Node<T>* node_right = node->get_right();
+        SplayNode<T>* node_right = node->get_right();
         if (node_right == NULL) {
-            Node<T>* new_node = new Node<T>(v);
+            SplayNode<T>* new_node = new SplayNode<T>(v);
             node->set_right(new_node);
             return new_node;
         }
@@ -226,9 +226,9 @@ Node<T>* SplayTree<T>::add_value(Node<T>* node, T v) { // Assumir valores difere
         }
     }
     else { // Left
-        Node<T>* node_left = node->get_left();
+        SplayNode<T>* node_left = node->get_left();
         if (node_left == NULL) {
-            Node<T>* new_node = new Node<T>(v);
+            SplayNode<T>* new_node = new SplayNode<T>(v);
             node->set_left(new_node);
             return new_node;
         }
@@ -239,18 +239,18 @@ Node<T>* SplayTree<T>::add_value(Node<T>* node, T v) { // Assumir valores difere
 }
 
 template<class T>
-Node<T>* SplayTree<T>::lookup(T v) {
+SplayNode<T>* SplayTree<T>::lookup(T v) {
     return find_value(root, v);
 }
 
 template<class T>
-Node<T>* SplayTree<T>::find_value(Node<T>* node, T v) {
+SplayNode<T>* SplayTree<T>::find_value(SplayNode<T>* node, T v) {
     T value = node->get_value();
     if (v == value) {
         return node;
     }
     else {
-        Node<T>* new_node = (v > value) ? node->get_right() : node->get_left();
+        SplayNode<T>* new_node = (v > value) ? node->get_right() : node->get_left();
         if (new_node == NULL) {
             return NULL;
         }
@@ -263,9 +263,9 @@ Node<T>* SplayTree<T>::find_value(Node<T>* node, T v) {
 template<class T>
 void SplayTree<T>::remove_root() {
 
-    Node<T>* old_root = root;
-    Node<T>* left_node = root->get_left();
-    Node<T>* right_node = root->get_right();
+    SplayNode<T>* old_root = root;
+    SplayNode<T>* left_node = root->get_left();
+    SplayNode<T>* right_node = root->get_right();
     if (left_node == NULL && right_node == NULL) { // only element
         root = NULL;
     }
@@ -280,7 +280,7 @@ void SplayTree<T>::remove_root() {
 
     else {
 
-        Node<T>* new_root = left_node->get_max();
+        SplayNode<T>* new_root = left_node->get_max();
         root = left_node;
 
         splay(new_root);
@@ -294,12 +294,12 @@ void SplayTree<T>::remove_root() {
 
 
 template<class T>
-void SplayTree<T>::splay(Node<T>* node) {
+void SplayTree<T>::splay(SplayNode<T>* node) {
 
     if (node == root) { // already at root, dont need to splay
         return;
     }
-    Node<T>* father = node->get_father();
+    SplayNode<T>* father = node->get_father();
 
     if (father->get_father() == NULL) { // zig or zag
         if (father->get_left() == node) {// zig
@@ -310,7 +310,7 @@ void SplayTree<T>::splay(Node<T>* node) {
         }
     }
     else { // zig-zig or zag-zag or zig-zag left/right
-        Node<T>* grand_father = father->get_father();
+        SplayNode<T>* grand_father = father->get_father();
         if (grand_father->get_left() == father) { //zig-zig or zig-zag left
             if (father->get_left() == node) { //zig-zig
                 rotate_right(grand_father);
@@ -403,7 +403,7 @@ void SplayTree<T>::iterate_tree(FILE* file) {
     printf("%s", help_str);
     char cmd;
 
-    Node<T>* n = root;
+    SplayNode<T>* n = root;
     while (1) {
 
         if (n != NULL) {
@@ -412,7 +412,7 @@ void SplayTree<T>::iterate_tree(FILE* file) {
         scanf("\n%c", &cmd);
         switch (cmd) {
             case 'l' : {
-                Node<T>* left = n->get_left();
+                SplayNode<T>* left = n->get_left();
                 if (left == NULL) {
                     printf("Not going to NULL Node\n");
                 }
@@ -423,7 +423,7 @@ void SplayTree<T>::iterate_tree(FILE* file) {
             }
 
             case 'r' : {
-                Node<T>* right = n->get_right();
+                SplayNode<T>* right = n->get_right();
                 if (right == NULL) {
                     printf("Not going to NULL Node\n");
                 }

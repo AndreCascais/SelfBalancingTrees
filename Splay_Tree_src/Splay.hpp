@@ -10,30 +10,30 @@
 #include <stdlib.h>
 
 template<class T>
-class Node {
+class SplayNode {
 public:
-    Node(T value);
-    ~Node();
+    SplayNode(T value);
+    ~SplayNode();
 
     T get_value();
-    void set_left(Node<T>*);
-    Node<T>* get_left();
-    void set_right(Node<T>*);
-    Node<T>* get_right();
-    void set_father(Node<T>*);
-    Node<T>* get_father();
-    void set_son(Node<T>*);
-    void delete_son(Node<T>*);
+    void set_left(SplayNode<T>*);
+    SplayNode<T>* get_left();
+    void set_right(SplayNode<T>*);
+    SplayNode<T>* get_right();
+    void set_father(SplayNode<T>*);
+    SplayNode<T>* get_father();
+    void set_son(SplayNode<T>*);
+    void delete_son(SplayNode<T>*);
 
-    Node<T>* get_min();
-    Node<T>* get_max();
+    SplayNode<T>* get_min();
+    SplayNode<T>* get_max();
     void print_node();
 
 private:
     T value;
-    Node<T>* left;
-    Node<T>* right;
-    Node<T>* father;
+    SplayNode<T>* left;
+    SplayNode<T>* right;
+    SplayNode<T>* father;
 };
 
 template<class T>
@@ -45,20 +45,20 @@ public:
     void destroy_tree();
     void add_value(T);
     void remove_value(T v);
-    Node<T>* lookup(T v);
+    SplayNode<T>* lookup(T v);
     double get_ratio();
 
 private:
-    void destroy_tree(Node<T>*);
-    void delete_node(Node<T>*);
-    Node<T>* find_value(Node<T>*, T);
-    void rotate_right(Node<T>*);
-    void rotate_left(Node<T>*);
-    Node<T>* add_value(Node<T>*, T);
+    void destroy_tree(SplayNode<T>*);
+    void delete_node(SplayNode<T>*);
+    SplayNode<T>* find_value(SplayNode<T>*, T);
+    void rotate_right(SplayNode<T>*);
+    void rotate_left(SplayNode<T>*);
+    SplayNode<T>* add_value(SplayNode<T>*, T);
     void remove_root();
-    void splay(Node<T>*);
-    int get_n_nodes(Node<T>*);
-    int get_height(Node<T>*);
+    void splay(SplayNode<T>*);
+    int get_n_nodes(SplayNode<T>*);
+    int get_height(SplayNode<T>*);
 
-    Node<T>* root;
+    SplayNode<T>* root;
 };
