@@ -1,11 +1,11 @@
 #include <iostream>
-#include <string.h>
 #include <map>
-#include <tgmath.h>
 #include <chrono>
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
+#include <ctgmath>
+#include <cstring>
 
 using namespace std;
 
@@ -17,7 +17,7 @@ FILE* file = nullptr;
 template<class T>
 class Node {
 public:
-    Node(T value);
+    Node(T v);
     ~Node();
 
     int get_height();
@@ -61,8 +61,8 @@ private:
     void destroy_tree(Node<T>* node);
     void delete_node(Node<T>*);
     Node<T>* find_value(Node<T>* node, T v);
-    void rotate_right(Node<T>* nodex_x);
-    void rotate_left(Node<T>* nodex_x);
+    void rotate_right(Node<T>* node_x);
+    void rotate_left(Node<T>* node_x);
     Node<T>* add_value(Node<T>* node, T v);
     Node<T>* remove_node(Node<T>* node);
     void traverse_backwards(Node<T>* node);
@@ -82,8 +82,7 @@ Node<T>::Node(T v) {
 }
 
 template<class T>
-Node<T>::~Node() {
-}
+Node<T>::~Node() = default;
 
 template<class T>
 T Node<T>::get_value() {
@@ -212,8 +211,7 @@ AVLTree<T>::AVLTree() {
 }
 
 template<class T>
-AVLTree<T>::~AVLTree() {
-}
+AVLTree<T>::~AVLTree() = default;
 
 template<class T>
 void AVLTree<T>::add_value(T v) {
@@ -478,7 +476,7 @@ void AVLTree<T>::traverse_backwards(Node<T>* node) {
 template<class T>
 void AVLTree<T>::iterate_tree() {
 
-    int i, v, option = 1;
+    int v, option = 1;
     if (file != nullptr) {
 
         int n_inserts, n_removes, n_lookups;
@@ -487,7 +485,7 @@ void AVLTree<T>::iterate_tree() {
         double max_ratio = 0;
         double avg_ratio = 0;*/
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-        for (i = 0; i < n_inserts; i++) {
+        for (int i = 0; i < n_inserts; i++) {
             fscanf(file, "%d", &v);
             add_value(v);
             /*if (i > 3) {
@@ -505,7 +503,7 @@ void AVLTree<T>::iterate_tree() {
         std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                   << " milliseconds for insertion" << std::endl;
         begin = std::chrono::steady_clock::now();
-        for (i = 0; i < n_removes; i++) {
+        for (int i = 0; i < n_removes; i++) {
             fscanf(file, "%d", &v);
             remove_value(v);
         }
@@ -513,7 +511,7 @@ void AVLTree<T>::iterate_tree() {
         std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                   << " milliseconds for removal" << std::endl;
         begin = std::chrono::steady_clock::now();
-        for (i = 0; i < n_lookups; i++) {
+        for (int i = 0; i < n_lookups; i++) {
             fscanf(file, "%d", &v);
             lookup(v);
         }
