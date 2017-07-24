@@ -1,7 +1,5 @@
 #include "AVL.hpp"
 
-using namespace std;
-
 //@todo overload operador == entre nodes ?
 
 FILE* file = nullptr;
@@ -35,7 +33,7 @@ void Node<T>::update_height() {
     Node<T>* right = this->get_right();
     int height_left = (left == nullptr ? -1 : left->get_height());
     int height_right = (right == nullptr ? -1 : right->get_height());
-    height = 1 + max(height_left, height_right);
+    height = 1 + std::max(height_left, height_right);
 }
 
 template<class T>
@@ -136,8 +134,8 @@ Node<T>* Node<T>::get_min() {
 template<class T>
 void Node<T>::print_node() {
 
-    cout << "I am at " << this->get_value() << " my height is " << this->get_height() <<
-         " height diff is " << this->get_height_diff() << endl;
+    std::cout << "I am at " << this->get_value() << " my height is " << this->get_height() <<
+              " height diff is " << this->get_height_diff() << std::endl;
 }
 
 template<class T>
@@ -425,8 +423,8 @@ void AVLTree<T>::iterate_tree() {
             add_value(v);
             /*if (i > 3) {
                 double ratio = get_ratio();
-                min_ratio = min(ratio, min_ratio);
-                max_ratio = max(ratio, max_ratio);
+                min_ratio = std::min(ratio, min_ratio);
+                max_ratio = std::max(ratio, max_ratio);
                 avg_ratio += ratio;
                 if (ratio < 1 || ratio >= 1.44)
                     printf("ratio = %lf at %d\n", ratio, i);
