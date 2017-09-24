@@ -346,7 +346,7 @@ AVLNode<T>* AVLTree<T>::remove_node(AVLNode<T>* node) {
         return backtrack_node;
 
     }
-    delete node;
+    //delete node;
     return father;
 }
 

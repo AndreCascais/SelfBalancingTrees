@@ -13,5 +13,7 @@ int main(int argc, char** argv) {
     t->iterate_tree(file);
     delete t;
 
+    fclose(file);
+
     return 0;
 }

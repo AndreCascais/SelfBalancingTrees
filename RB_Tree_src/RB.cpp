@@ -523,6 +523,8 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
             *k = number;
             V v = (V) malloc(sizeof(V));
             insert(k, v);
+            free(k);
+            free(v);
 
 //            if (i % 1000 == 0) {
 //                std::cout << i << std::endl;
@@ -554,6 +556,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
             K k = (K) malloc(sizeof(K));
             *k = number;
             remove(k);
+            free(k);
 
 //            if (i % 1000 == 0) {
 //                std::cout << i << std::endl;
@@ -667,6 +670,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
                 K k = (K) malloc(sizeof(K));
                 *k = number;
                 remove(k);
+                free(k);
                 n = _root;
 
             }
