@@ -9,7 +9,6 @@ int main(int argc, char** argv) {
     }
 
     auto t = new RBTree<int*, int*>();
-//    auto t = new RBTree<std::string, std::string>();
     t->iterate_tree(file);
     delete t;
 

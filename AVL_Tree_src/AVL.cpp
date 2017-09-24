@@ -227,7 +227,7 @@ void AVLTree<T>::rotate_right(AVLNode<T>* node_x) {
 template<class T>
 AVLNode<T>* AVLTree<T>::add_value(AVLNode<T>* node, T v) { // Assumir valores diferentes a serem inseridos
     T value = node->get_value();
-    if (v > value) {// Right
+    if (v > value) { // Right
         AVLNode<T>* node_right = node->get_right();
         if (node_right == nullptr) {
             AVLNode<T>* new_node = new AVLNode<T>(v);

@@ -1,5 +1,7 @@
 .idea/
 cmake-build-debug/
-execs/
-build/
+cmake-build-release/
 cmake-xcode/
+cmake-linux/
+cmake-infer/
+execs/

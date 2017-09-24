@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
         file = fopen(argv[1], "r");
     }
 
-    SplayTree<int>* t = new SplayTree<int>();
+    auto t = new SplayTree<int>();
     t->iterate_tree(file);
     delete t;
 

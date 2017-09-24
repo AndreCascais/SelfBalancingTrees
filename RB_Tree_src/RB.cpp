@@ -466,9 +466,9 @@ void RBTree<K, V>::insert(K key, V value) {
 
 template<typename K, typename V>
 void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
-    V newValue = newNode->get_value();
+    // V newValue = newNode->get_value();
     K newKey = newNode->get_key();
-    V oldValue = rootOfSubtree->get_value();
+    // V oldValue = rootOfSubtree->get_value();
     K oldKey = rootOfSubtree->get_key();
 
     if (newKey > oldKey) { // Insert on the right

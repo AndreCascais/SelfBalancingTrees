@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
         file = fopen(argv[1], "r");
     }
 
-    AVLTree<int>* t = new AVLTree<int>();
+    auto t = new AVLTree<int>();
     t->iterate_tree(file);
     delete t;
 
