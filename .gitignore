@@ -5,3 +5,4 @@ cmake-xcode/
 cmake-linux/
 cmake-infer/
 execs/
+Inputs/*.txt

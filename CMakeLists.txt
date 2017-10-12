@@ -2,8 +2,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(SelfBalancingTrees)
 
-#set(CMAKE_VERBOSE_MAKEFILE true)
-
 set(CMAKE_CXX_STANDARD 14)
 
 
@@ -57,14 +55,14 @@ add_test("AVL_-_1000000I0R1000000L" "../execs/AVLTree" "../Inputs/1000000I0R1000
 add_test("AVL_-_10000000I0R10000000L" "../execs/AVLTree" "../Inputs/10000000I0R10000000L.txt")
 
 
-add_test("Splay_-_1000I999R0L" "../execs/AVLTree" "../Inputs/1000I999R0L.txt")
-add_test("Splay_-_10000I9999R0L" "../execs/AVLTree" "../Inputs/10000I9999R0L.txt")
-add_test("Splay_-_100000I99999R0L" "../execs/AVLTree" "../Inputs/100000I99999R0L.txt")
-add_test("Splay_-_1000000I999999R0L" "../execs/AVLTree" "../Inputs/1000000I999999R0L.txt")
-add_test("Splay_-_10000000I9999999R0L" "../execs/AVLTree" "../Inputs/10000000I9999999R0L.txt")
+add_test("Splay_-_1000I999R0L" "../execs/SplayTree" "../Inputs/1000I999R0L.txt")
+add_test("Splay_-_10000I9999R0L" "../execs/SplayTree" "../Inputs/10000I9999R0L.txt")
+add_test("Splay_-_100000I99999R0L" "../execs/SplayTree" "../Inputs/100000I99999R0L.txt")
+add_test("Splay_-_1000000I999999R0L" "../execs/SplayTree" "../Inputs/1000000I999999R0L.txt")
+add_test("Splay_-_10000000I9999999R0L" "../execs/SplayTree" "../Inputs/10000000I9999999R0L.txt")
 
-add_test("Splay_-_1000I0R1000L" "../execs/AVLTree" "../Inputs/1000I0R1000L.txt")
-add_test("Splay_-_10000I0R10000L" "../execs/AVLTree" "../Inputs/10000I0R10000L.txt")
-add_test("Splay_-_100000I0R100000L" "../execs/AVLTree" "../Inputs/100000I0R100000L.txt")
-add_test("Splay_-_1000000I0R1000000L" "../execs/AVLTree" "../Inputs/1000000I0R1000000L.txt")
-add_test("Splay_-_10000000I0R10000000L" "../execs/AVLTree" "../Inputs/10000000I0R10000000L.txt")
+add_test("Splay_-_1000I0R1000L" "../execs/SplayTree" "../Inputs/1000I0R1000L.txt")
+add_test("Splay_-_10000I0R10000L" "../execs/SplayTree" "../Inputs/10000I0R10000L.txt")
+add_test("Splay_-_100000I0R100000L" "../execs/SplayTree" "../Inputs/100000I0R100000L.txt")
+add_test("Splay_-_1000000I0R1000000L" "../execs/SplayTree" "../Inputs/1000000I0R1000000L.txt")
+add_test("Splay_-_10000000I0R10000000L" "../execs/SplayTree" "../Inputs/10000000I0R10000000L.txt")
