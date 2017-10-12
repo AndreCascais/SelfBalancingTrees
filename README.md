@@ -1,30 +1,38 @@
 # SelfBalancingTrees
-AVL and red-black tree implementation
+This code was initially developed for a college course on Algorithms.
 
-# Making 
+In it we've implemented AVL, Splay, and RedBlack Tree.
+
+## Compiling the code
+```bash
 mkdir build
 cd build
 cmake ..
 make
+```
 
-# Input generation
-besides the available inputs, we added a inputs generator script,
+## Input generation
+Besides the available inputs, we added a inputs generator script,
 
+```bash
 cd Inputs
-./input_generator ADDS REMOVES LOOKUPS
+./input_generator <ADDS> <REMOVES> <LOOKUPS>
+```
 
-the script generates a file with the desired number of adds, removes and lookups (only removes, lookups existing values).
-the input file structure should be:
+The script generates a file with the desired number of adds, removes and lookups (it will only tey to remove or lookup existing values).
 
-0/1 	- don't go / go to interactive mode
-ADDS 	- number of adds
+The input file structure should be:
+```
+1/0     - go / don't go into interactive mode
+ADDS    - number of adds
 REMOVES - number of removes
 LOOKUPS - number of lookups
-VALUES 	- the desired values
+VALUES  - the desired values
+```
 
-# Program usage
+## Program usage
+```bash
 ./execs/AVLTree INPUTFILE
+```
 
-if option 1 is used, the program will go to an interactive CLI where you can press h for help.
-
-
+If option 1 is used, the program will go to an interactive CLI where you can press h for help.
