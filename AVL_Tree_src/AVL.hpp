@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <chrono>
+#include <algorithm>
 
 // C Headers
 #include <cstdio>

@@ -2,12 +2,9 @@
 #include <map>
 #include <chrono>
 #include <list>
-#include <algorithm>
 
 #include <cstdio>
-#include <cstdlib>
 #include <ctgmath>
-#include <cstring>
 
 
 using namespace std;
