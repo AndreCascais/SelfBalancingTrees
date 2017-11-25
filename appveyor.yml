@@ -1,0 +1,25 @@
+image:
+  - Visual Studio 2017
+  - Visual Studio 2015
+
+before_build:
+    - cd Inputs
+    - input_generator.sh 1000 999 0 0
+    - input_generator.sh 10000 9999 0 0
+    - input_generator.sh 100000 99999 0 0
+    - input_generator.sh 1000000 999999 0 0
+    - input_generator.sh 10000000 9999999 0 0
+    - input_generator.sh 1000 0 1000 0
+    - input_generator.sh 10000 0 10000 0
+    - input_generator.sh 100000 0 100000 0
+    - input_generator.sh 1000000 0 1000000 0
+    - input_generator.sh 10000000 0 10000000 0
+    - cd ..
+
+build_script:
+  - mkdir build && cd build
+  - cmake ..
+  - cmake --build . --config Release
+
+test_script:
+  - ctest -V

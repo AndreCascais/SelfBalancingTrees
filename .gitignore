@@ -1,8 +1,4 @@
 .idea/
-cmake-build-debug/
-cmake-build-release/
-cmake-xcode/
-cmake-linux/
-cmake-infer/
+cmake-*
 execs/
 Inputs/*.txt
