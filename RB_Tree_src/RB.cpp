@@ -597,16 +597,8 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         return;
     }
 
-    char help_str[] = "Done reading from file\n"
-            "l - left\n"
-            "r - right\n"
-            "f - father\n"
-            "t - root\n"
-            "q - quit\n"
-            "a v  - adds value v to tree\n"
-            "d v - deletes value v from tree\n";
+    print_help();
 
-    printf("%s", help_str);
     char cmd;
 
     RBNode<K, V>* n = _root;
@@ -679,6 +671,18 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
                 std::cout << "Unknown cmd\n" << std::endl;
         }
     }
+}
+
+template<typename K, typename V>
+void RBTree<K, V>::print_help() const {
+    printf("Done reading from file\n"
+            "l - left\n"
+            "r - right\n"
+            "f - father\n"
+            "t - root\n"
+            "q - quit\n"
+            "a v  - adds value v to tree\n"
+            "d v - deletes value v from tree\n");
 }
 
 

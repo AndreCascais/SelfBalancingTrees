@@ -62,4 +62,6 @@ private:
     int get_height(SplayNode<T>*);
 
     SplayNode<T>* root;
+
+    void print_help() const;
 };

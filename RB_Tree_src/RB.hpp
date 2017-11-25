@@ -107,4 +107,6 @@ private:
     int black_height(RBNode<K, V>* n);
     double get_ratio();
     int get_height(RBNode<K, V>* pNode);
+
+    void print_help() const;
 };

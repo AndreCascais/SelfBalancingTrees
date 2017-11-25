@@ -66,4 +66,6 @@ private:
     int get_height(AVLNode<T>* node);
 
     AVLNode<T>* root;
+
+    void print_help() const;
 };
