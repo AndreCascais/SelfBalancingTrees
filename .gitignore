@@ -2,3 +2,9 @@
 cmake-*
 execs/
 Inputs/*.txt
+RemoveInputs/*
+LookupInputs/*
+AddInputs/*
+*.jpg
+*png
+build/
