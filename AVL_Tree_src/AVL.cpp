@@ -305,7 +305,7 @@ AVLNode<T>* AVLTree<T>::remove_node(AVLNode<T>* node) {
             father->delete_son(node);
         }
     }
-			father->set_son(left_node);
+            father->set_son(left_node);
 }
 
 
@@ -467,8 +467,6 @@ void AVLTree<T>::iterate_tree(FILE* file) {
                 scanf("%d", &v);
                 this->add_value(v);
                 n = root;
-
-
             }
                 break;
             case 'd' : {
@@ -476,14 +474,6 @@ void AVLTree<T>::iterate_tree(FILE* file) {
                 this->remove_value(v);
                 n = root;
             }
-            case 'f' : {
-				      if (father == NULL)
-				        Node<T>* father = n->get_father();
-			      	else
-					      printf("Not going to NULL Node\n");
-					    n = father;
-				      break;
-			      }
                 break;
             default :
                 printf("Unknown cmd\n");
@@ -504,4 +494,4 @@ void AVLTree<T>::print_help() const {
                    "d v - deletes value v from tree\n");
 }
 
-		
+        

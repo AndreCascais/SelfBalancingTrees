@@ -2,6 +2,7 @@
 #include <map>
 #include <chrono>
 #include <list>
+#include <algorithm>
 
 #include <cstdio>
 #include <ctgmath>
