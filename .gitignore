@@ -6,5 +6,5 @@ RemoveInputs/*
 LookupInputs/*
 AddInputs/*
 *.jpg
-*png
+*.png
 build/

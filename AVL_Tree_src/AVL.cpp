@@ -305,7 +305,49 @@ AVLNode<T>* AVLTree<T>::remove_node(AVLNode<T>* node) {
             father->delete_son(node);
         }
     }
+    else if (right_node == nullptr) { // only have left son
+        if (father == nullptr) {
+            root = left_node;
+        }
+        else {
             father->set_son(left_node);
+        }
+    }
+    else if (left_node == nullptr) { // only have right son
+        if (father == nullptr) {
+            root = right_node;
+        }
+        else {
+            father->set_son(right_node);
+        }
+    }
+    else {
+        AVLNode<T>* new_root = left_node->get_max();
+        AVLNode<T>* backtrack_node = new_root->get_father(); // exemplo raul
+        if (backtrack_node->get_value() == node->get_value()) {// exemplo nao raul
+            backtrack_node = new_root;
+        }
+        new_root->get_father()->set_son(new_root->get_left());
+        if (father != nullptr) {
+            father->set_son(new_root);
+        }
+        else {
+            new_root->set_father(nullptr);
+            root = new_root;
+        }
+        if (left_node->get_value() != new_root->get_value()) {
+            new_root->set_left(left_node);
+        }
+        else { // case where we new root is the left node (dont want cycles)
+            new_root->set_left(left_node->get_left());
+        }
+        new_root->set_right(right_node);
+        delete node;
+        return backtrack_node;
+
+    }
+    //delete node;
+    return father;
 }
 
 
@@ -467,6 +509,7 @@ void AVLTree<T>::iterate_tree(FILE* file) {
                 scanf("%d", &v);
                 this->add_value(v);
                 n = root;
+
             }
                 break;
             case 'd' : {
@@ -493,5 +536,3 @@ void AVLTree<T>::print_help() const {
                    "a v  - adds value v to tree\n"
                    "d v - deletes value v from tree\n");
 }
-
-        
