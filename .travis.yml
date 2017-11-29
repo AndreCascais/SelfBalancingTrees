@@ -64,7 +64,7 @@ matrix:
       before_script:
         - brew update
         - brew cask uninstall oclint
-        - brew upgrade gcc@4.9
+        - brew install gcc@4.9
         - brew install r
     - os: osx
       osx_image: xcode9.2
