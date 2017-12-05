@@ -2,17 +2,15 @@
 
 int main(int argc, char** argv) {
 
-    FILE* file = nullptr;
+    std::string file_name;
 
     if (argc > 1) {
-        file = fopen(argv[1], "r");
+        file_name = argv[1];
     }
 
     auto t = new RBTree<int*, int*>();
-    t->iterate_tree(file);
+    t->iterate_tree(file_name);
     delete t;
-
-    fclose(file);
 
     return 0;
 }

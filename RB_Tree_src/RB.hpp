@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include <chrono>
+#include <fstream>
 
 // C Headers
 #include <cstring>
@@ -89,7 +90,7 @@ public:
     void transplant(RBNode<K, V>* node_U, RBNode<K, V>* node_V);
 
 
-    void iterate_tree(FILE* f);
+    void iterate_tree(std::string file_name);
     void destroy_tree();
 
 

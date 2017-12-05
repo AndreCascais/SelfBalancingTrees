@@ -503,12 +503,14 @@ void RBTree<K, V>::insert(RBNode<K, V>* rootOfSubtree, RBNode<K, V>* newNode) {
 
 
 template<typename K, typename V>
-void RBTree<K, V>::iterate_tree(FILE* file) {
+void RBTree<K, V>::iterate_tree(std::string file_name) {
 
     int option = 1;
     int number;
 
-    if (file != nullptr) {
+    std::ifstream file(file_name);
+
+    if (file) {
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 //        double min_ratio = 100000;
@@ -516,9 +518,10 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
 //        double avg_ratio = 0;
 
         int n_inserts, n_removes, n_lookups;
-        fscanf(file, "%d%d%d%d", &option, &n_inserts, &n_removes, &n_lookups);
+        file >> option >> n_inserts >> n_removes >> n_lookups;
+
         for (int i = 0; i < n_inserts; i++) {
-            fscanf(file, "%d", &number);
+            file >> number;
             K k = (K) malloc(sizeof(K));
             *k = number;
             V v = (V) malloc(sizeof(V));
@@ -552,7 +555,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         begin = std::chrono::steady_clock::now();
 
         for (int i = 0; i < n_removes; i++) {
-            fscanf(file, "%d", &number);
+            file >> number;
             K k = (K) malloc(sizeof(K));
             *k = number;
             remove(k);
@@ -574,7 +577,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
         begin = std::chrono::steady_clock::now();
 
         for (int i = 0; i < n_lookups; i++) {
-            fscanf(file, "%d", &number);
+            file >> number;
             K k = (K) malloc(sizeof(K));
             *k = number;
             find_with_key(k);
@@ -648,7 +651,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
                 return;
 
             case 'a' : {
-                scanf("%d", &number);
+                std::cin >> number;
                 K k = (K) malloc(sizeof(K));
                 *k = number;
                 V v = (V) malloc(sizeof(V));
@@ -658,7 +661,7 @@ void RBTree<K, V>::iterate_tree(FILE* file) {
             }
                 break;
             case 'd' : {
-                scanf("%d", &number);
+                std::cin >> number;
                 K k = (K) malloc(sizeof(K));
                 *k = number;
                 remove(k);
