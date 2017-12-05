@@ -1,4 +1,5 @@
 #include "RB.cpp"
+#include "Integer.hpp"
 
 int main(int argc, char** argv) {
 
@@ -8,7 +9,7 @@ int main(int argc, char** argv) {
         file_name = argv[1];
     }
 
-    auto t = new RBTree<int*, int*>();
+    auto t = new RBTree<intWrapper, intWrapper>();
     t->iterate_tree(file_name);
     delete t;
 

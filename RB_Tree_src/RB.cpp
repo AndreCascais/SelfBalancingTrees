@@ -522,12 +522,9 @@ void RBTree<K, V>::iterate_tree(std::string file_name) {
 
         for (int i = 0; i < n_inserts; i++) {
             file >> number;
-            K k = (K) malloc(sizeof(K));
-            *k = number;
-            V v = (V) malloc(sizeof(V));
+            K k = K(number);
+            V v;
             insert(k, v);
-//            free(k);
-//            free(v);
 
 //            if (i % 1000 == 0) {
 //                std::cout << i << std::endl;
@@ -556,10 +553,8 @@ void RBTree<K, V>::iterate_tree(std::string file_name) {
 
         for (int i = 0; i < n_removes; i++) {
             file >> number;
-            K k = (K) malloc(sizeof(K));
-            *k = number;
+            K k = K(number);
             remove(k);
-//            free(k);
 
 //            if (i % 1000 == 0) {
 //                std::cout << i << std::endl;
@@ -578,9 +573,9 @@ void RBTree<K, V>::iterate_tree(std::string file_name) {
 
         for (int i = 0; i < n_lookups; i++) {
             file >> number;
-            K k = (K) malloc(sizeof(K));
-            *k = number;
+            K k = K(number);
             find_with_key(k);
+
 //            if (i % 1000 == 0) {
 //                std::cout << i << std::endl;
 //                bool result = verify();
@@ -652,9 +647,8 @@ void RBTree<K, V>::iterate_tree(std::string file_name) {
 
             case 'a' : {
                 std::cin >> number;
-                K k = (K) malloc(sizeof(K));
-                *k = number;
-                V v = (V) malloc(sizeof(V));
+                K k = K(number);
+                V v;
                 insert(k, v);
                 n = _root;
 
@@ -662,10 +656,8 @@ void RBTree<K, V>::iterate_tree(std::string file_name) {
                 break;
             case 'd' : {
                 std::cin >> number;
-                K k = (K) malloc(sizeof(K));
-                *k = number;
+                K k = K(number);
                 remove(k);
-//                free(k);
                 n = _root;
 
             }
