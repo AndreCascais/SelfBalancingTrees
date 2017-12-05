@@ -620,8 +620,8 @@ void RBTree<K, V>::iterate_tree(std::string file_name) {
                 else {
                     n = left;
                 }
-            }
                 break;
+            }
             case 'r' : {
                 RBNode<K, V>* right = n->get_rightChild();
                 if (right == _nullLeaf) {
@@ -630,8 +630,8 @@ void RBTree<K, V>::iterate_tree(std::string file_name) {
                 else {
                     n = right;
                 }
-            }
                 break;
+            }
             case 't' : {
                 if (n == _root) {
                     printf("Already at root\n");
@@ -639,31 +639,30 @@ void RBTree<K, V>::iterate_tree(std::string file_name) {
                 else {
                     n = n->get_father();
                 }
-            }
                 break;
-            case 'q' :
+            }
+            case 'q' : {
                 destroy_tree();
                 return;
-
+            }
             case 'a' : {
                 std::cin >> number;
                 K k = K(number);
                 V v;
                 insert(k, v);
                 n = _root;
-
-            }
                 break;
+            }
             case 'd' : {
                 std::cin >> number;
                 K k = K(number);
                 remove(k);
                 n = _root;
-
-            }
                 break;
-            default :
+            }
+            default : {
                 std::cout << "Unknown cmd\n" << std::endl;
+            }
         }
     }
 }
