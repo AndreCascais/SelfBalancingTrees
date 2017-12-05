@@ -5,7 +5,7 @@ image:
 install:
   - choco upgrade chocolatey #'Get-PackageParameters'
   - choco install r.project
-  - set Path=C:\Program Files\R\R-3.4.2\bin\x64;%Path% 
+  - set Path=C:\Program Files\R\R-3.4.3\bin\x64;%Path%
 
 before_build:
     - cd Inputs
