@@ -1,6 +1,5 @@
 language: cpp
-dist: trusty
-sudo: required
+dist: xenial
 
 script:
     - cd Inputs
@@ -15,13 +14,12 @@ script:
     - ./input_generator.sh 1000000 0 1000000 0
     - ./input_generator.sh 10000000 0 10000000 0
     - cd ..
-    - mkdir build
-    - cd build
+    - mkdir build && cd build
     - cmake -D CMAKE_BUILD_TYPE=Release ..
-    - make
+    - cmake --build . --config Release
     - ctest -V
 
-before_install:
+before_script:
     - eval "${MATRIX_EVAL}"
 
 matrix:
@@ -29,89 +27,99 @@ matrix:
 
     ######## OSX CLANG ########
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode10.1
       env:
         - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++"
-      before_script:
+      before_install:
         - brew update
-        - brew cask uninstall oclint
         - brew install llvm@3.9 && brew link --overwrite llvm@3.9 --force
+      install: &mac_extra
         - brew install r
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode10.1
       env:
         - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++"
-      before_script:
+      before_install:
         - brew update
-        - brew cask uninstall oclint
         - brew install llvm@4 && brew link --overwrite llvm@4 --force
-        - brew install r
+      install: *mac_extra
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode10.1
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++"
-      before_script:
+      before_install:
         - brew update
-        - brew cask uninstall oclint
         - brew install llvm@5 && brew link --overwrite llvm@5 --force
-        - brew install r
+      install: *mac_extra
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode10.1
       env:
         - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++"
-      before_script:
+      before_install:
         - brew update
-        - brew cask uninstall oclint
         - brew install llvm@6 && brew link --overwrite llvm@6 --force
-        - brew install r
+      install: *mac_extra
+    - os: osx
+      osx_image: xcode10.1
+      env:
+        - MATRIX_EVAL="CC=clang-7 && CXX=clang++"
+      before_install:
+        - brew update
+        - brew install llvm@7 && brew link --overwrite llvm@7 --force
+        - export PATH="/usr/local/opt/llvm/bin:$PATH"
+        - export LDFLAGS="-L/usr/local/opt/llvm/lib"
+        - export CPPFLAGS="-I/usr/local/opt/llvm/include"
+      install: *mac_extra
 
     ######## OSX GCC ########
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode10.1
       env:
         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
-      before_script:
+      before_install:
         - brew update
-        - brew cask uninstall oclint
         - brew install gcc@4.9
-        - brew install r
+      install: *mac_extra
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode10.1
       env:
         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-      before_script:
+      before_install:
         - brew update
-        - brew cask uninstall oclint
         - brew install gcc@5
-        - brew install r
+      install: *mac_extra
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode10.1
       env:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-      before_script:
+      before_install:
         - brew update
-        - brew cask uninstall oclint
         - brew install gcc@6
-        - brew install r
+      install: *mac_extra
     - os: osx
-      osx_image: xcode9.3
+      osx_image: xcode10.1
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-      before_script:
+      before_install:
         - brew update
-        - brew cask uninstall oclint
         - brew install gcc
-        - brew install r
+      install: *mac_extra
+    - os: osx
+      osx_image: xcode10.1
+      env:
+        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+      before_install:
+        - brew update
+        - brew link gcc@8
+      install: *mac_extra
 
     ######## LINUX CLANG ########
     - os: linux
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-3.9
-            - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-3.9
           packages:
-            - libstdc++-6-dev
             - clang-3.9
             - r-base
       env:
@@ -120,7 +128,7 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-4.0
+            - llvm-toolchain-xenial-4.0
           packages:
             - clang-4.0
             - r-base
@@ -130,13 +138,32 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-5.0
+            - llvm-toolchain-xenial-5.0
           packages:
             - clang-5.0
             - r-base
       env:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
-
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-xenial-6.0
+          packages:
+            - clang-6.0
+            - r-base
+      env:
+        - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-xenial-7
+          packages:
+            - clang-7
+            - r-base
+      env:
+        - MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
     ######## LINUX GCC ########
     - os: linux
       addons:
@@ -178,3 +205,13 @@ matrix:
             - r-base
       env:
         - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+    - os : linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+            - r-base
+      env:
+        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
