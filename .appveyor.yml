@@ -1,0 +1,32 @@
+image:
+  - Visual Studio 2022
+  - Visual Studio 2019
+  - Visual Studio 2017
+  - Visual Studio 2015
+  - Visual Studio 2013
+
+install:
+  - choco install r.project
+  - set Path=C:\Program Files\R\R-3.5.2\bin\x64;%Path%
+
+before_build:
+  - cd Inputs
+  - input_generator.sh 1000 999 0 0
+  - input_generator.sh 10000 9999 0 0
+  - input_generator.sh 100000 99999 0 0
+  - input_generator.sh 1000000 999999 0 0
+  - input_generator.sh 10000000 9999999 0 0
+  - input_generator.sh 1000 0 1000 0
+  - input_generator.sh 10000 0 10000 0
+  - input_generator.sh 100000 0 100000 0
+  - input_generator.sh 1000000 0 1000000 0
+  - input_generator.sh 10000000 0 10000000 0
+  - cd ..
+
+build_script:
+  - mkdir build && cd build
+  - cmake -DCMAKE_BUILD_TYPE=Release ..
+  - cmake --build . --config Release
+
+test_script:
+  - ctest -V
