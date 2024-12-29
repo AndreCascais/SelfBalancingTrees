@@ -1,8 +1,9 @@
 #GENERAL CONFIG ZONE
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
+
 project(SelfBalancingTrees)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 23)
 
 
 #LOCATE SOURCE FILES ZONE
